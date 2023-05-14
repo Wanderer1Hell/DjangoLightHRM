@@ -3,7 +3,7 @@ from employee.utility import code_format
 from django.db import models
 from employee.managers import EmployeeManager
 from phonenumber_field.modelfields import PhoneNumberField
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 from django.contrib.auth.models import User
 from leave.models import Leave
 
@@ -386,12 +386,12 @@ class Employee(models.Model):
 
     # PERSONAL DATA
     user = models.ForeignKey(User,on_delete=models.CASCADE,default=1)
-    title = models.CharField(_('Title'),max_length=4,default=MR,choices=TITLE,blank=False,null=True)
+    title = models.CharField(_('Title'),max_length=5,default=MR,choices=TITLE,blank=False,null=True)
     image = models.FileField(_('Profile Image'),upload_to='profiles',default='default.png',blank=True,null=True,help_text='upload image size less than 2.0MB')#work on path username-date/image
     firstname = models.CharField(_('Firstname'),max_length=125,null=False,blank=False)
     lastname = models.CharField(_('Lastname'),max_length=125,null=False,blank=False)
     othername = models.CharField(_('Othername (optional)'),max_length=125,null=True,blank=True)
-    sex = models.CharField(_('Gender'),max_length=8,default=MALE,choices=GENDER,blank=False)
+    sex = models.CharField(_('Gender'),max_length=10,default=MALE,choices=GENDER,blank=False)
     email = models.CharField(_('Email (optional)'),max_length=255,default=None,blank=True,null=True)
     tel = PhoneNumberField(default='+233240000000', null = False, blank=False, verbose_name='Phone Number (Example +233240000000)', help_text= 'Enter number with Country Code Eg. +233240000000')
     bio = models.CharField(_('Bio'),help_text='your biography,tell me something about yourself eg. i love working ...',max_length=255,default='',null=True,blank=True)
