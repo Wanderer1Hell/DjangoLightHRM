@@ -1,0 +1,2 @@
+# DjangoLightHRM
+Diploma project
