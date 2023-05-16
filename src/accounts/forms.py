@@ -30,7 +30,7 @@ class UserAddForm(UserCreationForm):
 			'''
 			True - Queryset exist run validation message here
 			'''
-			raise forms.ValidationError('email {0} already exists'.format(email))
+			raise forms.ValidationError('Электронная почта {0} уже существует'.format(email))
 
 
 		elif get_rabotec_domain not in domain_list:

@@ -179,7 +179,7 @@
                 	<div class="table-responsive table-shadow">
                 		<div class="text-center table-description">
                 			<h4 class="title-h3" style="color: #60a0b3 !important;
-    						text-shadow: 1px 0px rgba(0,0,0,0.11)">REJECTED LEAVES</h4>
+    						text-shadow: 1px 0px rgba(0,0,0,0.11)">ОТМЕНЕННЫЕ ОТПУСКА</h4>
                 		</div>
 
                 		<section class="total-leaves-count">
@@ -192,11 +192,11 @@
 							  <thead>
 							    <tr>
 							      <!-- <th scope="col">#</th> -->
-							      <th scope="col">User</th>
-							      <th scope="col">Type</th>
-							      <th scope="col">Day(s)</th>
-							      <th scope="col">Status</th>
-							      <th scope="col">Actions</th>
+							      <th scope="col">Работник</th>
+							      <th scope="col">Тип</th>
+							      <th scope="col">День (дни)</th>
+							      <th scope="col">Статус</th>
+							      <th scope="col">Действия</th>
 							    </tr>
 							  </thead>
 							  <tbody>
@@ -214,7 +214,7 @@
 							      	</a>
 							      	
 							      	{% if leave.is_rejected %}
-							      		<a href="{% url 'dashboard:unreject' leave.id %}">unreject</a>
+							      		<a href="{% url 'dashboard:unreject' leave.id %}">Отказать</a>
 							      	{% endif %}
 							        
 							      </td>

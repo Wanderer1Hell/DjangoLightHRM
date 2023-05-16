@@ -16,7 +16,7 @@
                         <li>
                             <a href="" class="dropdown-toggle" data-toggle="dropdown">
                                 <i class=""></i>
-                                <p class="hidden-lg hidden-md">Dashboard</p>
+                                <p class="hidden-lg hidden-md">Панель</p>
                             </a>
                         </li>
 
@@ -24,23 +24,23 @@
                         <li class="dropdown">
                               <a href="" class="dropdown-toggle" data-toggle="dropdown">
                                     <p>
-                                        Leave
+                                        Отпуск
                                         <b class="caret"></b>
                                     </p>
 
                               </a>
                               <ul class="dropdown-menu">
                                 {% if request.user.is_superuser %}
-                                <li><a href="{% url 'dashboard:leaveslist' %}">Pending Leaves</a></li>
-                                <li><a href="{% url 'dashboard:approvedleaveslist' %}">Approved Leaves</a></li>
-                                <li><a href="{% url 'dashboard:canceleaveslist' %}">Cancelled Leaves</a></li>
-                                <li><a href="{% url 'dashboard:leavesrejected' %}">Rejected Leaves</a></li>
+                                <li><a href="{% url 'dashboard:leaveslist' %}">Отложенные заявления на отпуск</a></li>
+                                <li><a href="{% url 'dashboard:approvedleaveslist' %}">Утверждённые заявления на отпуск</a></li>
+                                <li><a href="{% url 'dashboard:canceleaveslist' %}">Отменённые заявления на отпуск</a></li>
+                                <li><a href="{% url 'dashboard:leavesrejected' %}">Отклонённые заявления на отпуск</a></li>
                                 <li class="divider"></li>
-                                <li><a href="{% url 'dashboard:createleave' %}">Apply for Leave</a></li>
+                                <li><a href="{% url 'dashboard:createleave' %}">Подать заявление на отпуск</a></li>
                                 {% else %}
-                                <li><a href="{% url 'dashboard:createleave' %}">Apply for Leave</a></li>
+                                <li><a href="{% url 'dashboard:createleave' %}">Подать заявление на отпуск</a></li>
                                 <li class="divider"></li>
-                                <li><a href="{% url 'dashboard:staffleavetable' %}">All Leaves</a></li>
+                                <li><a href="{% url 'dashboard:staffleavetable' %}">Все отпуска</a></li>
                                 {% endif %}
                               </ul>
                         </li>
@@ -50,20 +50,20 @@
                         <li class="dropdown">
                               <a href="" class="dropdown-toggle" data-toggle="dropdown">
                                     <p>
-                                        Employee
+                                        Сотрудники
                                         <b class="caret"></b>
                                     </p>
 
                               </a>
                               <ul class="dropdown-menu">
-                                <li><a href="{% url 'dashboard:employeecreate' %}">Add Employee</a></li>
-                                <li><a href="{% url 'dashboard:employees' %}">All Employees</a></li>
+                                <li><a href="{% url 'dashboard:employeecreate' %}">Добавить сотрудника</a></li>
+                                <li><a href="{% url 'dashboard:employees' %}">Все сотрудники</a></li>
                                 <li class="divider"></li>
-                                <li><a href="{% url 'dashboard:emergencycreate' %}">+ Emergency</a></li>
-                                <li><a href="{% url 'dashboard:familycreate' %}">+ Family</a></li>
-                                <li><a href="{% url 'dashboard:bankaccountcreate' %}">+ Bank Account</a></li>
+                                <li><a href="{% url 'dashboard:emergencycreate' %}">+ Экстренные контакты</a></li>
+                                <li><a href="{% url 'dashboard:familycreate' %}">+ Семья</a></li>
+                                <li><a href="{% url 'dashboard:bankaccountcreate' %}">+ Банковские данные</a></li>
                                 <li class="divider"></li>
-                                <li><a href="{% url 'accounts:erasedusers' %}">Deleted Employees</a></li>
+                                <li><a href="{% url 'accounts:erasedusers' %}">Удалённые сотрудники</a></li>
                               </ul>
                         </li>
                         {% endif %}
@@ -72,14 +72,14 @@
                         <li class="dropdown">
                               <a href="" class="dropdown-toggle" data-toggle="dropdown">
                                     <p>
-                                        Users
+                                        Пользователи
                                         <b class="caret"></b>
                                     </p>
 
                               </a>
                               <ul class="dropdown-menu">
-                                <li><a href="{% url 'accounts:register' %}">Create Users</a></li>
-                                <li><a href="{% url 'accounts:users' %}">All Users</a></li>
+                                <li><a href="{% url 'accounts:register' %}">Создать пользователя</a></li>
+                                <li><a href="{% url 'accounts:users' %}">Все пользователи</a></li>
                               </ul>
                         </li>
                         {% endif %}
@@ -115,12 +115,12 @@
                               </a>
                               <ul class="dropdown-menu">
                                 {% if request.user.is_authenticated %}
-                                <li><a href="{% url 'accounts:logout'  %}">Logout</a></li>
+                                <li><a href="{% url 'accounts:logout'  %}">Выйти</a></li>
                                 {% else %}
-                                <li><a href="{% url 'accounts:login'  %}">Login</a></li>
+                                <li><a href="{% url 'accounts:login'  %}">Войти</a></li>
                                 {% endif %}
-                                <li><a href="{% url 'accounts:userprofile' %}">Profile</a></li>
-                                <li><a href="{% url 'accounts:changepassword' %}">Change Password</a></li>
+                                <li><a href="{% url 'accounts:userprofile' %}">Профиль</a></li>
+                                <li><a href="{% url 'accounts:changepassword' %}">Сменить пароль</a></li>
                                 <!-- <li class="divider"></li>
                                 <li><a href="">Settings</a></li> -->
                               </ul>

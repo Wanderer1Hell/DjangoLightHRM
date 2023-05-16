@@ -140,19 +140,19 @@ span{
                         </section>
                         <section class="col-lg-8 col-md-12 col-sm-12">
                                     <div class="list-group" id="list-tab" role="tablist">
-                                            <a class="list-group-item list-group-item-action" id="list-home-list" data-toggle="list" href="" role="tab" aria-controls=""><span>Employee</span> <div>{{ employee.get_full_name }}</div>
+                                            <a class="list-group-item list-group-item-action" id="list-home-list" data-toggle="list" href="" role="tab" aria-controls=""><span>Сотрудник</span> <div>{{ employee.get_full_name }}</div>
                                             </a>
-                                            <a class="list-group-item list-group-item-action" id="list-profile-list" data-toggle="list" href="" role="tab" aria-controls=""><span>Start Date</span> <div> Start Date {{ leave.startdate }}</div>
+                                            <a class="list-group-item list-group-item-action" id="list-profile-list" data-toggle="list" href="" role="tab" aria-controls=""><span>Дата начала работы</span> <div> Start Date {{ leave.startdate }}</div>
                                             </a>
-                                            <a class="list-group-item list-group-item-action" id="list-messages-list" data-toggle="list" href="" role="tab" aria-controls=""><span>End Date</span><div>{{ leave.enddate}}</div>
+                                            <a class="list-group-item list-group-item-action" id="list-messages-list" data-toggle="list" href="" role="tab" aria-controls=""><span>Дата увольнения</span><div>{{ leave.enddate}}</div>
                                             </a>
-                                            <a class="list-group-item list-group-item-action" id="list-settings-list" data-toggle="list" href="" role="tab" aria-controls=""><span>Duration</span> <div>{{ leave.leave_days}}</div>
+                                            <a class="list-group-item list-group-item-action" id="list-settings-list" data-toggle="list" href="" role="tab" aria-controls=""><span>Длительность</span> <div>{{ leave.leave_days}}</div>
                                             </a>
-                                            <a class="list-group-item list-group-item-action" id="list-settings-list" data-toggle="list" href="" role="tab" aria-controls=""><span>Type</span> <div>{{ leave.leavetype}}</div>
+                                            <a class="list-group-item list-group-item-action" id="list-settings-list" data-toggle="list" href="" role="tab" aria-controls=""><span>Тип</span> <div>{{ leave.leavetype}}</div>
                                             </a>
-                                            <a class="list-group-item list-group-item-action" id="list-settings-list" data-toggle="list" href="" role="tab" aria-controls=""><span>Reason</span> <div>{{ leave.reason}}</div>
+                                            <a class="list-group-item list-group-item-action" id="list-settings-list" data-toggle="list" href="" role="tab" aria-controls=""><span>Причина</span> <div>{{ leave.reason}}</div>
                                             </a>
-                                             <a class="list-group-item list-group-item-action" id="list-settings-list" data-toggle="list" href="" role="tab" aria-controls=""><span>Status</span> <div>{{ leave.status}}</div>
+                                             <a class="list-group-item list-group-item-action" id="list-settings-list" data-toggle="list" href="" role="tab" aria-controls=""><span>Статус</span> <div>{{ leave.status}}</div>
                                              </a>
 
                                        
@@ -163,7 +163,7 @@ span{
 
 
                              
-                                  <span style="font-size: 13px;padding-left: 1rem;" class="pull-left">Created {{ leave.created }}</span>
+                                  <span style="font-size: 13px;padding-left: 1rem;" class="pull-left">Создано {{ leave.created }}</span>
                               
 
               {% if request.user.is_superuser and request.user.is_staff %}
@@ -172,14 +172,14 @@ span{
                       <section class="col col-lg-4 col-sm-12 col-lg-offset-7 text-center">
                         <div class="btn-group btn-group-justified">
                           {%if leave.leave_approved %}
-                          <a href="{% url 'dashboard:userleaveunapprove' leave.id %}" class="btn btn-primary" name='unapprove'>UNAPPROVE
+                          <a href="{% url 'dashboard:userleaveunapprove' leave.id %}" class="btn btn-primary" name='unapprove'>ОТКРЫТЬ
                           </a>
                           {% else %}
-                          <a href="{% url 'dashboard:userleaveapprove' leave.id %}" class="btn btn-primary" name='approve'>APPROVE
+                          <a href="{% url 'dashboard:userleaveapprove' leave.id %}" class="btn btn-primary" name='approve'>УТВЕРДИТЬ
                           </a>
                           {% endif %}
-                          <a href="{% url 'dashboard:userleavecancel' leave.id %}" class="btn btn-info" name='cancel'>CANCEL</a>
-                          <a href="{% url 'dashboard:reject' leave.id %}" class="btn btn-warning" name='reject'>REJECT</a>  
+                          <a href="{% url 'dashboard:userleavecancel' leave.id %}" class="btn btn-info" name='cancel'>ОТМЕНИТЬ</a>
+                          <a href="{% url 'dashboard:reject' leave.id %}" class="btn btn-warning" name='reject'>ОТКАЗАТЬ</a>
                         </div>
                       </section>
                     </section>

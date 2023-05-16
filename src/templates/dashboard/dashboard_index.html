@@ -1,4 +1,3 @@
-
 {% extends '_layout.html' %}
 
 {% block title %} {{ title }} {% endblock %}
@@ -77,24 +76,25 @@
             		{% if request.user.is_superuser and request.user.is_staff %}
             		<section class="col col-lg-4">
             			<div class="employee-box sec-box">
-            				<a href="">
-            				<span>Employees </span>
-            				</a>
-            				<span class="count-object">{{ employees.count }}</span> 
-            			</div>
+                            <a href="{% url 'dashboard:employees' %}">
+                                <span>Сотрудники</span>
+                            </a>
+                            <span class="count-object">{{ employees.count }}</span>
+                        </div>
+
             		</section>
             		<section class="col col-lg-4">
             			<div class="leave-box sec-box">
-            				<a href="">
-            				<span>Leaves</span>
+            				<a href="{% url 'dashboard:leaveslist' %}">
+            				<span>Отпуск</span>
             				</a>
                             <span class="count-object" style="color:#41b6d6;">{{ leaves.count }}</span> 
             			</div>
             		</section>
             		<section class="col col-lg-4">
             			<div class="birthday-box sec-box">
-            				<a href="">
-            				<span>Birthdays</span>
+            				<a href="{% url 'dashboard:birthdays' %}">
+            				<span>День рождения</span>
             				</a>
                             <span class="count-object"> {{employees_birthday.count}} </span>
             			</div>
@@ -103,7 +103,7 @@
                     <section class="col col-lg-6">
                         <div class="leave-box sec-box">
                             <a href="">
-                            <span>Leaves</span>
+                            <span>Отпуск</span>
                             </a>
                             <span class="count-object" style="color:#41b6d6;">{{ staff_leaves.count }}</span> 
                         </div>
@@ -111,7 +111,7 @@
                     <section class="col col-lg-6">
                         <div class="birthday-box sec-box">
                             <a href="">
-                            <span>Birthdays</span>
+                            <span>День рождения</span>
                             </a>
                             <span class="count-object"> {{employees_birthday.count}} </span>
                         </div>
@@ -141,7 +141,7 @@
 
           $.notify({
               icon: 'fa fa-user',
-              message: "Welcome to Rabotec HRM suite,"+get_login_user
+              message: "Добро пожаловать на (название сайта), "+get_login_user
 
             },{
                 type: 'info',

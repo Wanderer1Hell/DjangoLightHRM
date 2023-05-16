@@ -3,7 +3,7 @@
 {% load humanize %}
 
 <!doctype html>
-<html lang="en">
+<html lang="ru">
 <head>
 	<meta charset="utf-8" />
 	<link rel="icon" type="image/png" href="assets/img/favicon.ico">
@@ -107,7 +107,7 @@
 
     	<div class="sidebar-wrapper">
             <div class="logo">
-                <a href="#" class="simple-text">
+                <a href="{% url "dashboard:dashboard" %}" class="simple-text">
                     RABOTEC <span>HRM</span>
                 </a>
             </div>
@@ -116,26 +116,26 @@
                 <li class="active">
                     <a href="{% url 'dashboard:dashboard' %}">
                         <i class="pe-7s-graph"></i>
-                        <p>Dashboard</p>
+                        <p>Панель</p>
                     </a>
                 </li>
                 <li class="">
                     <a href="/">
                         <i class="pe-7s-home"></i>
-                        <p>Home</p>
+                        <p>Главная страница</p>
                     </a>
                 </li>
                 <li>
                     <a href="{% url 'accounts:userprofile' %}">
                         <i class="pe-7s-id"></i>
-                        <p>User Profile</p>
+                        <p>Профиль пользователя</p>
                     </a>
                 </li>
                 {% if request.user.is_superuser and request.user.is_staff %}
                 <li>
                     <a href="{% url 'dashboard:employees' %}">
                         <i class="pe-7s-users"></i>
-                        <p>Employee</p>
+                        <p>Сотрудники</p>
                     </a>
                 </li>
                 {% endif %}
@@ -143,13 +143,13 @@
                 <li>
                     {% if request.user.is_superuser %}<a href="{% url 'dashboard:leaveslist' %}">{% else %}<a href="{% url 'dashboard:staffleavetable' %}"> {% endif %}
                         <i class="pe-7s-news-paper"></i>
-                        <p>Leave</p>
+                        <p>Отпуска</p>
                     </a>
                 </li>
                 <li>
                     <a href="{% url 'dashboard:birthdays' %}">
                         <i class="pe-7s-gift"></i>
-                        <p>Birthday {{ employees_birthday.count }}</p>
+                        <p>День рождения {{ employees_birthday.count }}</p>
                     </a>
                 </li>
             </ul>

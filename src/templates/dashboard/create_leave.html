@@ -99,7 +99,7 @@
                             <form action="{% url 'dashboard:createleave' %}" method="POST">
                                 {% csrf_token %}
                                 {{ form | crispy }}
-                                <button type="submit" class="btn btn-primary btn-lg btn-block">Send Request</button>
+                                <button type="submit" class="btn btn-primary btn-lg btn-block">Отправить</button>
                             </form>
                         </section>
 

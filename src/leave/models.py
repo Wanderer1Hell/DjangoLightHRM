@@ -24,11 +24,11 @@ DAYS = 30
 
 class Leave(models.Model):
 	user = models.ForeignKey(User,on_delete=models.CASCADE,default=1)
-	startdate = models.DateField(verbose_name=_('Start Date'),help_text='leave start date is on ..',null=True,blank=False)
-	enddate = models.DateField(verbose_name=_('End Date'),help_text='coming back on ...',null=True,blank=False)
+	startdate = models.DateField(verbose_name=_('Дата начала'),null=True,blank=False)
+	enddate = models.DateField(verbose_name=_('Дата окончания'),null=True,blank=False)
 	leavetype = models.CharField(choices=LEAVE_TYPE,max_length=25,default=SICK,null=True,blank=False)
-	reason = models.CharField(verbose_name=_('Reason for Leave'),max_length=255,help_text='add additional information for leave',null=True,blank=True)
-	defaultdays = models.PositiveIntegerField(verbose_name=_('Leave days per year counter'),default=DAYS,null=True,blank=True)
+	reason = models.CharField(verbose_name=_('Причина отпуска'),max_length=255,help_text='Добавить дополнительную информацию для отпуска',null=True,blank=True)
+	defaultdays = models.PositiveIntegerField(verbose_name=_('Количество дней отпуска в год счетчик'),default=DAYS,null=True,blank=True)
 
 
 	# hrcomments = models.ForeignKey('CommentLeave') #hide

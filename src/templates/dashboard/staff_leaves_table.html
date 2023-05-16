@@ -178,9 +178,9 @@
 							  <thead>
 							    <tr>
 							      <!-- <th scope="col">#</th> -->
-							      <th scope="col">Type</th>
-							      <th scope="col">Day(s)</th>
-							      <th scope="col">Status</th>
+							      <th scope="col">Тип</th>
+							      <th scope="col">День (дни)</th>
+							      <th scope="col">Статус</th>
 							    </tr>
 							  </thead>
 							  <tbody>
@@ -197,7 +197,7 @@
 
 							      <td> 
 							      	<a href="{% url 'dashboard:userleaveview' leave.id %}">
-							      	    VIEW
+							      	    ПРОСМОТРЕТЬ
 							      	</a>
 							      	
 							      </td>
@@ -210,7 +210,7 @@
 						</table>
 						{% else %}
 
-						<span>No Leaves can be found...</span>
+						<span>Отпусков не найденно.</span>
 						{% endif %}
 			
 					</div>

@@ -3,7 +3,7 @@
 {% load crispy_forms_tags %}
 
 <!doctype html>
-<html lang="en">
+<html lang="ru">
 <head>
 	<meta charset="utf-8" />
 	<link rel="icon" type="image/png" href="assets/img/favicon.ico">
@@ -287,13 +287,13 @@ h3{
              <div class="col-lg-6 col-lg-offset-3">
                 <div class="wrapper-form-index-page shadow">
                     <div class="row text-center">
-                        <h3 class="title-h3">User Login</h3>
+                        <h3 class="title-h3">Вход в систему</h3>
                     </div>
 
                      <form action="" method="POST" id="login_form">
                         {% csrf_token %}
                         {{ form | crispy}}
-                        <button  type="submit" class="btn btn-primary btn-lg btn-block btn-custom">Login</button>
+                        <button  type="submit" class="btn btn-primary btn-lg btn-block btn-custom">Войти</button>
                         <div class="forgt-pass-wrp">
                             <!-- <a href="">Forgotten your password ?</a> -->
                         </div>

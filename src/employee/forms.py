@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 
 # EMPLoYEE
 class EmployeeCreateForm(forms.ModelForm):
-	employeeid = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'please enter 5 characters without RGL or slashes eg. A0025'}))
+	employeeid = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Пожалуйста, введите 5 символов без символов и косых черт, например, A0025'}))
 	image = forms.ImageField(widget=forms.FileInput(attrs={'onchange':'previewImage(this);'}))
 	class Meta:
 		model = Employee

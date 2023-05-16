@@ -12,15 +12,15 @@ class LeaveCreationForm(forms.ModelForm):
 
 
 	def clean_enddate(self):
-		enddate = self.cleaned_data['enddate']
-		startdate = self.cleaned_data['startdate']
+		enddate = self.cleaned_data['Дата окончания']
+		startdate = self.cleaned_data['Дата начала']
 		today_date = datetime.date.today()
 
 		if (startdate or enddate) < today_date:# both dates must not be in the past
-			raise forms.ValidationError("Selected dates are incorrect,please select again")
+			raise forms.ValidationError("Выбранные даты неверны, пожалуйста, выберите еще раз")
 
 		elif startdate >= enddate:# TRUE -> FUTURE DATE > PAST DATE,FALSE other wise
-			raise forms.ValidationError("Selected dates are wrong")
+			raise forms.ValidationError("Выбранные даты неверны")
 
 		return enddate
 
