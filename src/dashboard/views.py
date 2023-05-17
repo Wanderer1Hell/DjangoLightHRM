@@ -191,17 +191,49 @@ def employee_edit_data(request, id):
             instance.Date_issue = request.POST.get('Date_issue')
             instance.Issued = request.POST.get('Issued')
             instance.Unit_code = request.POST.get('Unit_code')
-            instance.Date_Registrations = request.POST.get('Date_Registrations ')
+            instance.Date_Registrations = request.POST.get('Date_Registrations')
             instance.Zip_Code = request.POST.get('Zip_Code')
-            instance.Region = request.POST.get('Region')
-            instance.District = request.POST.get('District')
-            instance.Settlement = request.POST.get('Settlement')
-            instance.Street = request.POST.get('Street')
-            instance.Home = request.POST.get('Home')
-            instance.Corps = request.POST.get('Corps')
-            instance.Apartment = request.POST.get('Apartment')
-            instance.residence = request.POST.get('residence')
 
+            region_value = request.POST.get('Region')
+            if region_value:
+                if not region_value.startswith('обл.'):
+                    region_value = 'обл.' + region_value
+            instance.Region = region_value
+
+
+            district_value = request.POST.get('District')
+            if district_value:
+                if not district_value.startswith('р-н.'):
+                    district_value = 'р-н.' + district_value
+            instance.District = district_value
+
+            settlement_value = request.POST.get('Settlement')
+            if settlement_value:
+                if not settlement_value.startswith('нп.'):
+                    settlement_value = 'нп.' + settlement_value
+                instance.Settlement = settlement_value
+
+            street_value = request.POST.get('Street')
+            if street_value:
+                if not street_value.startswith('ул.'):
+                    street_value = 'ул.' + street_value
+            instance.Street = street_value
+
+            home_value = request.POST.get('Home')
+            if home_value:
+                if not home_value.startswith('д.'):
+                    home_value = 'д.' + home_value
+            instance.Home = home_value
+
+            instance.Corps = request.POST.get('Corps')
+
+            apartment_value = request.POST.get('Apartment')
+            if apartment_value:
+                if not apartment_value.startswith('кв.'):
+                    apartment_value = 'кв.' + apartment_value
+            instance.Apartment = apartment_value
+
+            instance.residence = request.POST.get('residence')
             religion_id = request.POST.get('religion')
             religion = Religion.objects.get(id=religion_id)
             instance.religion = religion
@@ -233,7 +265,8 @@ def employee_edit_data(request, id):
             instance.employeetype = request.POST.get('employeetype')
             instance.employeeid = request.POST.get('employeeid')
             instance.dateissued = request.POST.get('dateissued')
-            instance.image = request.FILES.get('image')
+            if 'image' in request.FILES:
+                instance.image = request.FILES['image']
             instance.bio = request.POST.get('bio')
 
 

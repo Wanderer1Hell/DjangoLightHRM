@@ -352,39 +352,28 @@ class Employee(models.Model):
     Corps = models.CharField(_('Корпус'), max_length=125, null=True, blank=True)
     Apartment = models.CharField(_('Квартира'), max_length=125, null=True, blank=True)
     residence = models.CharField(_('Текущее место жительства'), max_length=125, null=False, blank=False)
-    religion = models.ForeignKey(Religion, verbose_name=_('Гражданство'), on_delete=models.SET_NULL, null=True,
-                                 default=None)
-    nationality = models.ForeignKey(Nationality, verbose_name=_('Национальность'), on_delete=models.SET_NULL, null=True,
-                                    default=None)
-    Resolution = models.CharField(_('Разрешение на работу №'), help_text='Разрешение на работу иностранного сотрудника',
-                                  max_length=125, null=True, blank=True)
+    religion = models.ForeignKey(Religion, verbose_name=_('Гражданство'), on_delete=models.SET_NULL, null=True,default=None)
+    nationality = models.ForeignKey(Nationality, verbose_name=_('Национальность'), on_delete=models.SET_NULL, null=True,default=None)
+    Resolution = models.CharField(_('Разрешение на работу №'), help_text='Разрешение на работу иностранного сотрудника',max_length=125, null=True, blank=True)
     ssnitnumber = models.CharField(_('СНИЛС'), max_length=30, null=True, blank=True)
     tinnumber = models.CharField(_('ИНН'), max_length=15, null=True, blank=True)
-    tel = PhoneNumberField(default='+79', null=False, blank=False, verbose_name='Номер телефона',
-                           help_text='Введите номер с кодом страны')
+    tel = PhoneNumberField(default='+79', null=False, blank=False, verbose_name='Номер телефона',help_text='Введите номер с кодом страны')
     email = models.CharField(_('Email'), max_length=255, default=None, blank=True, null=True)
     # region = models.CharField(_('Страна'),max_length=20,default=GREATER,choices=GHANA_REGIONS,blank=False,null=True)
 
-    education = models.CharField(_('Образование'), help_text='Уровень образования', max_length=38, default=SENIORHIGH,
-                                 choices=EDUCATIONAL_LEVEL, blank=False, null=True)
+    education = models.CharField(_('Образование'), help_text='Уровень образования', max_length=38, default=SENIORHIGH,choices=EDUCATIONAL_LEVEL, blank=False, null=True)
     lastwork = models.CharField(_('Последнее место работы'), max_length=125, null=True, blank=True)
-    position = models.CharField(_('Занимаемая должность'), help_text='Занимаемая должность на последнем месте работы?',
-                                max_length=255, null=True, blank=True)
+    position = models.CharField(_('Занимаемая должность'), help_text='Занимаемая должность на последнем месте работы?',max_length=255, null=True, blank=True)
 
     # COMPANY DATA
-    department = models.ForeignKey(Department, verbose_name=_('Департамент'), on_delete=models.SET_NULL, null=True,
-                                   default=None)
+    department = models.ForeignKey(Department, verbose_name=_('Департамент'), on_delete=models.SET_NULL, null=True,default=None)
     role = models.ForeignKey(Role, verbose_name=_('Должность'), on_delete=models.SET_NULL, null=True, default=None)
     startdate = models.DateField(_('Дата приема на работу'), help_text='Дата по приказу', blank=False, null=True)
-    employeetype = models.CharField(_('Тип сотрудника'), max_length=21, default=FULL_TIME, choices=EMPLOYEETYPE,
-                                    blank=False, null=True)
+    employeetype = models.CharField(_('Тип сотрудника'), max_length=21, default=FULL_TIME, choices=EMPLOYEETYPE,blank=False, null=True)
     employeeid = models.CharField(_('Табельный номер сотрудника'), max_length=10, null=True, blank=True)
     dateissued = models.DateField(_('Дата выдачи пропуска'), help_text='Дата выдачи пропуска', blank=False, null=True)
-    image = models.FileField(_('Изображение профиля'), upload_to='profiles', default='default.png', blank=True,
-                             null=True,
-                             help_text='Загружайте изображения размером менее 2,0 МБ')  # work on path username-date/image
-    bio = models.CharField(_('Заметки'), help_text='Дополнительная информация', max_length=255, default='', null=True,
-                           blank=True)
+    image = models.FileField(_('Изображение профиля'), upload_to='profiles', default='default.png', blank=True, null=True, help_text='Загрузи изображения не более 2.0 Мб')  # work on path username-date/image
+    bio = models.CharField(_('Заметки'), help_text='Дополнительная информация', max_length=255, default='', null=True, blank=True)
 
     # app related
     is_blocked = models.BooleanField(_('Is Blocked'), help_text='button to toggle employee block and unblock',
@@ -433,6 +422,18 @@ class Employee(models.Model):
             document_info = Document_series + ' ' + Document_number
 
         return document_info
+
+    def __str__(self):
+        return self.get_residence_address
+
+    @property
+    def get_residence_address(self):
+        address_parts = [attr for attr in
+                         [self.Region, self.District, self.Settlement, self.Street, self.Home, self.Corps,
+                          self.Apartment] if attr]
+
+        return ', '.join(address_parts)
+
 
     @property
     def get_age(self):

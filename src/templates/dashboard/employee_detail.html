@@ -114,7 +114,7 @@ span{
             <section class="container-fluid">
               <section class="row">
                 <section class="col col-lg-12">
-                  <span><a href="{{request.META.HTTP_REFERER|escape}}" style="color:#565656;">Back</a></span>
+                  <span><a href="{{request.META.HTTP_REFERER|escape}}" style="color:#565656;">Назад</a></span>
                 </section>
               </section>
                       <section class="row">
@@ -157,6 +157,7 @@ span{
               					  		<!--<li class="list-group-item"><span>Гражданство</span><div> {{ employee.nationality}}</div></li>-->
                               {% if employee.email %}
                               <li class="list-group-item"><span>Контакт</span> <div>{{ employee.tel }}</div></li>
+                                  <li class="list-group-item"><span>Email</span> <div>{{ employee.email }}</div></li>
                               {% endif %}
 
 
@@ -202,62 +203,55 @@ span{
                                             </a>
 
                                             {% if employee.firstname %}
-                                            <a class="list-group-item list-group-item-action" id="list-profile-list" data-toggle="list" href="" role="tab" aria-controls=""><span>Имя</span> <div> {{ employee.firstname}} </div>
+                                            <a class="list-group-item list-group-item-action" id="list-profile-list" data-toggle="list" href="" role="tab" aria-controls=""><span>Серия и номер документа</span> <div> {{ employee.get_document_info}} </div>
                                             </a>
                                             {% endif %}
 
                                             {% if employee.lastname %}
-                                            <a class="list-group-item list-group-item-action" id="list-profile-list" data-toggle="list" href="" role="tab" aria-controls=""><span>Фамилия</span> <div> {{ employee.lastname }} </div>
+                                            <a class="list-group-item list-group-item-action" id="list-profile-list" data-toggle="list" href="" role="tab" aria-controls=""><span>Дата выдачи</span> <div> {{ employee.Date_issue }} </div>
                                             </a>
                                             {% endif %}
 
                                             {% if employee.othername %}
-                                            <a class="list-group-item list-group-item-action" id="list-messages-list" data-toggle="list" href="" role="tab" aria-controls=""><span>Отчество</span> <div>{{ employee.othername}} </div>
+                                            <a class="list-group-item list-group-item-action" id="list-messages-list" data-toggle="list" href="" role="tab" aria-controls=""><span>Кем выдан</span> <div>{{ employee.Issued}} </div>
                                             </a>
                                             {% endif %}
 
                                             {% if employee.sex %}
-                                            <a class="list-group-item list-group-item-action" id="list-settings-list" data-toggle="list" href="" role="tab" aria-controls=""><span>Серия и номер документа</span> <div> {{ employee.get_document_info }}
+                                            <a class="list-group-item list-group-item-action" id="list-settings-list" data-toggle="list" href="" role="tab" aria-controls=""><span>Код подразделения</span> <div> {{ employee.Unit_code }}
                                             </div>
                                             </a>
                                             {% endif %}
 
                                             <!-- recent added 29/03/19 -->
                                             {% if employee.email %}
-                                            <a class="list-group-item list-group-item-action" id="list-settings-list" data-toggle="list" href="" role="tab" aria-controls=""><span>Email </span><div>{{ employee.email }} </div>
+                                            <a class="list-group-item list-group-item-action" id="list-settings-list" data-toggle="list" href="" role="tab" aria-controls=""><span>Адрес регистрации</span><div>{{ employee.get_residence_address }} </div>
                                             </a>
                                             {% endif %}
                                          
 
 
                                             {% if employee.tel %}
-                                            <a class="list-group-item list-group-item-action" id="list-settings-list" data-toggle="list" href="" role="tab" aria-controls=""><span>Контакты</span> <div> {{ employee.tel  }}</div></a>
+                                            <a class="list-group-item list-group-item-action" id="list-settings-list" data-toggle="list" href="" role="tab" aria-controls=""><span>Текущее место жительства</span> <div> {{ employee.residence  }}</div></a>
                                             {% endif %}
 
                                             {% if employee.tel %}
-                                            <a class="list-group-item list-group-item-action" id="list-settings-list" data-toggle="list" href="" role="tab" aria-controls=""><span>Bio</span> <div> {{ employee.bio }} </div></a>
+                                            <a class="list-group-item list-group-item-action" id="list-settings-list" data-toggle="list" href="" role="tab" aria-controls=""><span>Гражданство</span> <div> {{ employee.religion }} </div></a>
                                             {% endif %}
 
-
-                                            {% if employee.birthday %}
-                                            <a class="list-group-item list-group-item-action" id="list-settings-list" data-toggle="list" href="" role="tab" aria-controls=""><span>Дата рождения</span><div>{{ employee.birthday}}</div></a>
-                                            {% endif %}
 
                                             {% if employee.tinnumber %}
                                             <a class="list-group-item list-group-item-action" id="list-settings-list" data-toggle="list" href="" role="tab" aria-controls=""><span>ИНН</span> <div>{{ employee.tinnumber }}</div></a>
                                             {% endif %}
 
-                                            {% if employee.employeeid %}
-                                            <a class="list-group-item list-group-item-action" id="list-settings-list" data-toggle="list" href="" role="tab" aria-controls=""><span>ID Сотрудника</span> <div>{{ employee.employeeid }}</div></a>
-                                            {% endif %}
 
                                             {% if employee.dateissued %}
-                                            <a class="list-group-item list-group-item-action" id="list-settings-list" data-toggle="list" href="" role="tab" aria-controls=""><span>Дата выдачи (ID сотрудника)</span> <div>{{ employee.dateissued }}</div></a>
+                                            <a class="list-group-item list-group-item-action" id="list-settings-list" data-toggle="list" href="" role="tab" aria-controls=""><span>СНИЛС</span> <div>{{ employee.ssnitnumber }}</div></a>
                                             {% endif %}
 
                                             {% if request.user.is_superuser %}
                                             <div>
-                                              <span><a href="{% url 'dashboard:edit' employee.id %}">Edit</a></span>
+                                              <span><a href="{% url 'dashboard:edit' employee.id %}">Редактировать</a></span>
                                             </div>
 
                                             {% endif %}
@@ -273,49 +267,16 @@ span{
                                   <!-- Here working -->
                                   <div class="col col-lg-6">
                                         {% if  employee.religion %}
-                                            <a class="list-group-item list-group-item-action" id="list-settings-list" data-toggle="list" href="" role="tab" aria-controls=""><span style="">Национальность</span><div>{{  employee.religion }}</div>
+                                            <a class="list-group-item list-group-item-action" id="list-settings-list" data-toggle="list" href="" role="tab" aria-controls=""><span style="">Дата приема на работу</span><div>{{  employee.startdate }}</div>
                                             </a>
                                             {% endif %}
 
                                             {% if employee.nationality %}
-                                            <a class="list-group-item list-group-item-action" id="list-settings-list" data-toggle="list" href="" role="tab" aria-controls=""><span>Гражданство</span><div>{{ employee.nationality }}</div></a>
+                                            <a class="list-group-item list-group-item-action" id="list-settings-list" data-toggle="list" href="" role="tab" aria-controls=""><span>Табельный номер сотрудника</span><div>{{ employee.employeeid }}</div></a>
                                             {% endif %}
 
                                             {% if employee.hometown %}
-                                            <a class="list-group-item list-group-item-action" id="list-settings-list" data-toggle="list" href="" role="tab" aria-controls=""><span>Место рождения</span> <div>{{ employee.hometown}}</div></a>
-                                            {% endif %}
-
-
-                                            {% if employee.region %}
-                                            <a class="list-group-item list-group-item-action" id="list-settings-list" data-toggle="list" href="" role="tab" aria-controls=""><span>Регион</span> <div>{{ employee.region }}</div></a>
-                                            {% endif %}
-
-                                            {% if employee.residence %}
-                                            <a class="list-group-item list-group-item-action" id="list-settings-list" data-toggle="list" href="" role="tab" aria-controls=""><span>Место жительства (текущее)</span> <div>{{ employee.residence }}</div></a>
-                                            {% endif %}
-
-                                            {% if employee.address %}
-                                            <a class="list-group-item list-group-item-action" id="list-settings-list" data-toggle="list" href="" role="tab" aria-controls=""><span>Адрес (прописка)</span> <div>{{ employee.address }}</div></a>
-                                            {% endif %}
-
-                                            {% if employee.education %}
-                                            <a class="list-group-item list-group-item-action" id="list-settings-list" data-toggle="list" href="" role="tab" aria-controls=""><span>Образование</span> <div>{{ employee.education }}</div></a>
-                                            {% endif %}
-
-                                            {% if employee.lastwork %}
-                                            <a class="list-group-item list-group-item-action" id="list-settings-list" data-toggle="list" href="" role="tab" aria-controls=""><span>Последнее место работы</span> <div>{{ employee.lastwork }}</div></a>
-                                            {% endif %}
-
-                                            {% if employee.position %}
-                                            <a class="list-group-item list-group-item-action" id="list-settings-list" data-toggle="list" href="" role="tab" aria-controls=""><span>Должность (последнее место работы)</span> <div>{{ employee.position  }}</div></a>
-                                            {% endif %}
-
-                                            {% if employee.ssnitnumber %}
-                                            <a class="list-group-item list-group-item-action" id="list-settings-list" data-toggle="list" href="" role="tab" aria-controls=""><span>SSNI Number</span> <div>{{ employee.ssnitnumber  }}</div></a>
-                                            {% endif %}
-
-                                            {% if employee.startdate %}
-                                            <a class="list-group-item list-group-item-action" id="list-settings-list" data-toggle="list" href="" role="tab" aria-controls=""><span>Дата приема на работу</span> <div>{{ employee.startdate  }}</div></a>
+                                            <a class="list-group-item list-group-item-action" id="list-settings-list" data-toggle="list" href="" role="tab" aria-controls=""><span>Дата выдачи пропуска</span> <div>{{ employee.dateissued}}</div></a>
                                             {% endif %}
 
 
