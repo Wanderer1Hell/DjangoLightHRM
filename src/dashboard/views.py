@@ -316,31 +316,25 @@ def dashboard_employee_info(request, id):
 def dashboard_emergency_create(request):
     if not (request.user.is_authenticated and request.user.is_superuser and request.user.is_staff):
         return redirect('/')
+
+    emp_name = ''  # Объявление и присвоение значения по умолчанию
+
     if request.method == 'POST':
         form = EmergencyCreateForm(data=request.POST)
         if form.is_valid():
             instance = form.save(commit=False)
             employee_id = request.POST.get('employee')
-
             employee_object = Employee.objects.get(id=employee_id)
             emp_name = employee_object.get_full_name
-
             instance.employee = employee_object
             instance.fullname = request.POST.get('fullname')
             instance.tel = request.POST.get('tel')
             instance.location = request.POST.get('location')
             instance.relationship = request.POST.get('relationship')
-
-            # now = datetime.datetime.now()
-            # instance.created = now
-            # instance.updated = now
-
             instance.save()
-
             messages.success(request, 'Экстренная информация успешно сохранена для {0}'.format(emp_name),
                              extra_tags='alert alert-success alert-dismissible show')
             return redirect('dashboard:emergencycreate')
-
         else:
             messages.error(request, 'Ошибка при создании экстренной информации {0}'.format(emp_name),
                            extra_tags='alert alert-warning alert-dismissible show')
@@ -411,10 +405,7 @@ def dashboard_family_create(request):
             instance.occupation = request.POST.get('occupation')
             instance.tel = request.POST.get('tel')
             instance.children = request.POST.get('children')
-            instance.father = request.POST.get('father')
-            instance.foccupation = request.POST.get('foccupation')
-            instance.mother = request.POST.get('mother')
-            instance.moccupation = request.POST.get('moccupation')
+
 
             # now = datetime.datetime.now()
             # instance.created = now
@@ -460,13 +451,8 @@ def dashboard_family_edit(request, id):
 
             # Recently added 29/03/19
             instance.nextofkin = request.POST.get('nextofkin')
-            instance.contact = request.POST.get('contact')
             instance.relationship = request.POST.get('relationship')
 
-            instance.father = request.POST.get('father')
-            instance.foccupation = request.POST.get('foccupation')
-            instance.mother = request.POST.get('mother')
-            instance.moccupation = request.POST.get('moccupation')
 
             # now = datetime.datetime.now()
             # instance.created = now
@@ -488,7 +474,7 @@ def dashboard_family_edit(request, id):
     form = FamilyCreateForm(request.POST or None, instance=relation)
 
     dataset['form'] = form
-    dataset['title'] = 'RELATIONSHIP UPDATE FORM'
+    dataset['title'] = 'Состав семьи'
     return render(request, 'dashboard/family_create_form.html', dataset)
 
 
@@ -569,7 +555,7 @@ def employee_bank_account_update(request, id):
     form = BankAccountCreation(request.POST or None, instance=bank_instance_obj)
 
     dataset['form'] = form
-    dataset['title'] = 'Update Bank Account'
+    dataset['title'] = 'Данные об условиях труда (заработная плата)'
     return render(request, 'dashboard/bank_account_create_form.html', dataset)
 
 

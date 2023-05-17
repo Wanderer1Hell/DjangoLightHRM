@@ -79,6 +79,8 @@ class Religion(models.Model):
         return self.name
 
 
+
+
 class Bank(models.Model):
     # access table: employee.bank_set.
     employee = models.ForeignKey('employee', help_text='Выберите сотрудника(ов) для добавления банковского счета',
@@ -213,21 +215,13 @@ class Relationship(models.Model):
     children = models.PositiveIntegerField(_('Кол-во детей'), null=True, blank=True, default=0)
 
     # recently added - 29/03/19
-    nextofkin = models.CharField(_('Ближайшие родственники'), max_length=255, blank=False, null=True,
-                                 help_text='ФИО ближайшего родственника')
-    contact = PhoneNumberField(verbose_name='Номер телефона ближайшего родственника', null=True, blank=True,
-                               help_text='Номер телефона ближайшего родственника')
-    relationship = models.CharField(_('Отношения с ближайшим родственником'),
+    nextofkin = models.CharField(_('Ближайший родственник'), max_length=255, blank=False, null=True,
+                                 help_text='ФИО')
+    relationship = models.CharField(_('Родственные связи '),
                                     help_text='Кем для вас является этот человек?', max_length=40,
                                     choices=NEXTOFKIN_RELATIONSHIP, blank=False, null=True)
 
     # close recent
-
-    father = models.CharField(_('Имя отца'), max_length=255, blank=True, null=True)
-    foccupation = models.CharField(_('Профессия отца'), max_length=125, help_text='', blank=True, null=True)
-
-    mother = models.CharField(_('Имя матери'), max_length=255, blank=True, null=True)
-    moccupation = models.CharField(_('Профессия матери'), max_length=125, help_text='', blank=True, null=True)
 
     created = models.DateTimeField(verbose_name=_('Создано'), auto_now_add=True, null=True)
     updated = models.DateTimeField(verbose_name=_('Обновлено'), auto_now=True, null=True)

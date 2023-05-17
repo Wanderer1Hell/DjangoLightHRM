@@ -66,8 +66,8 @@
                     </section>
                     <section class="row">
                         <section class="col-lg-12 col-md-12 col-sm-12 text-center">
-                            <h3 class="title-h3">Add User</h3>
-                            <p>Пользователь должен быть создан перед добавлением в систему в качестве сотрудника</p>
+                            <h3 class="title-h3">Добавить пользователя</h3>
+                            <p>Пользователь должен быть создан перед добавлением в систему в качестве сотрудника отдела кадров</p>
                         </section>
                     </section>
 
@@ -76,7 +76,7 @@
                             <form action="" method="POST">
                                 {% csrf_token %}
                                 {{form | crispy }}
-                                <button type="submit" class="btn btn-primary btn-lg btn-block">Отправить</button>
+                                <button type="submit" class="btn btn-primary btn-lg btn-block">Сохранить</button>
                             </form>
                         </section>
 
