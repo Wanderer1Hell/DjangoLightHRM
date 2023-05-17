@@ -90,7 +90,7 @@
 
                     <section class="row">
                         <section class="col-lg-12 col-md-12 col-sm-12 text-center space-margin">
-                            <h3 class="title-h3">{{ title}}</h3>
+                            <h3 class="title-h3">{{ title }}</h3>
                         </section>
                     </section>
 
@@ -98,7 +98,7 @@
                         <section class="col-lg-12 col-md-12 col-sm-12">
                             <form action="" method="POST" enctype="multipart/form-data">
                                 {% csrf_token %}
-                                {{form | crispy }}
+                                {{ form | crispy }}
                                 <button type="submit" class="btn btn-primary btn-lg btn-block">Сохранить</button>
                             </form>
                         </section>

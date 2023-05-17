@@ -15,7 +15,7 @@ class UserAddForm(UserCreationForm):
 	class Meta:
 		model = User
 		fields = ['username','email','password1','password2']
-		
+
 
 	def clean_email(self):
 		email = self.cleaned_data['email']
@@ -45,7 +45,13 @@ class UserAddForm(UserCreationForm):
 
 
 class UserLogin(forms.Form):
-	username = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'username'}))
-	password = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder':'password'}))
+    username = forms.CharField(
+        label='Имя пользователя',
+        widget=forms.TextInput(attrs={'placeholder':'Логин...'})
+    )
+    password = forms.CharField(
+        label='Пароль',
+        widget=forms.PasswordInput(attrs={'placeholder':'Пароль...'})
+    )
 
 

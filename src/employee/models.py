@@ -82,7 +82,7 @@ class Religion(models.Model):
 class Bank(models.Model):
     # access table: employee.bank_set.
     employee = models.ForeignKey('employee', help_text='Выберите сотрудника(ов) для добавления банковского счета',
-                                 on_delete=models.CASCADE, null=True, blank=False)
+                                 on_delete=models.CASCADE, null=True, blank=False, verbose_name='Сотрудник')
     name = models.CharField(_('Наименование банка'), max_length=125, blank=False, null=True, help_text='')
     account = models.CharField(_('Номер счета'), help_text='Номер счета сотрудника', max_length=30, blank=False,
                                null=True)
@@ -128,7 +128,7 @@ class Emergency(models.Model):
     )
 
     # access table: employee.emergency_set.
-    employee = models.ForeignKey('employee', on_delete=models.CASCADE, null=True, blank=True)
+    employee = models.ForeignKey('employee', on_delete=models.CASCADE, null=True, blank=True, verbose_name='Сотрудник')
     fullname = models.CharField(_('ФИО'), help_text='С кем мы должны связаться?', max_length=255, null=True,
                                 blank=False)
     tel = PhoneNumberField(default='+79', null=False, blank=False, verbose_name='Номер телефона',
@@ -153,8 +153,8 @@ class Emergency(models.Model):
 
 
 class Relationship(models.Model):
-    MARRIED = 'Состоит в зарегистрированном браке '
-    SINGLE = 'Никогда не состоял(не состояла) в браке '
+    MARRIED = 'Состоит в зарегистрированном браке'
+    SINGLE = 'Никогда не состоял(не состояла) в браке'
     DIVORCED = 'В разводе'
     WIDOW = 'Вдова'
     WIDOWER = 'Вдовец'
@@ -202,7 +202,7 @@ class Relationship(models.Model):
     )
 
     # access table: employee.relationship_set.or related_name = 'relation' employee.relation.***
-    employee = models.ForeignKey('employee', on_delete=models.CASCADE, null=True, blank=True)
+    employee = models.ForeignKey('employee', on_delete=models.CASCADE, null=True, blank=True, verbose_name='Сотрудник')
     status = models.CharField(_('Семейное положение'), max_length=40, default=SINGLE, choices=STATUS, blank=False,
                               null=True)
     spouse = models.CharField(_('Супруг\а (ФИО)'), max_length=255, blank=True, null=True)
@@ -409,9 +409,6 @@ class Employee(models.Model):
             return fullname
         return
 
-    def __str__(self):
-        return self.get_document_info()
-
     @property
     def get_document_info(self):
         document_info = ''
@@ -422,9 +419,6 @@ class Employee(models.Model):
             document_info = Document_series + ' ' + Document_number
 
         return document_info
-
-    def __str__(self):
-        return self.get_residence_address
 
     @property
     def get_residence_address(self):
