@@ -1,3 +1,5 @@
+import os
+
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse, HttpResponseRedirect
@@ -307,7 +309,6 @@ def dashboard_employee_info(request, id):
     dataset['bank'] = bank_instance
     dataset['documents'] = documents
     dataset['title'] = 'profile - {0}'.format(employee.get_full_name)
-    print(dataset)
     return render(request, 'dashboard/employee_detail.html', dataset)
 
 
@@ -592,10 +593,33 @@ def dashboard_document_create(request):
     }
     return render(request, 'dashboard/document_create_form.html', dataset)
 
+
 def dashboard_document_delete(request, id):
+    if not (request.user.is_authenticated and request.user.is_superuser and request.user.is_staff):
+        return redirect('/')
+
     document = get_object_or_404(Document, id=id)
-    document.delete()
-    return redirect('dashboard:documentcreate')
+    userid = document.employee_id
+
+    if request.method == 'POST':
+        # Удаление файла
+        document_path = document.document_file.path
+        if os.path.exists(document_path):
+            os.remove(document_path)
+
+        # Удаление записи из БД
+        document.delete()
+
+        messages.success(request, 'Документ успешно удален',
+                         extra_tags='alert alert-success alert-dismissible show')
+        return redirect('dashboard:employeeinfo', id=userid)
+    else:
+        dataset = {
+            'title': 'Удаление документа',
+            'document': document,
+        }
+        return render(request, 'dashboard/document_delete_form.html', dataset)
+
 
 def dashboard_document_edit(request, id):
     pass
@@ -688,7 +712,6 @@ def leaves_view(request, id):
 
     leave = get_object_or_404(Leave, id=id)
     employee = Employee.objects.filter(user=leave.user)[0]
-    print(employee)
     return render(request, 'dashboard/leave_detail_view.html', {'leave': leave, 'employee': employee,
                                                                 'title': '{0}-{1} leave'.format(leave.user.username,
                                                                                                 leave.status)})
@@ -782,7 +805,6 @@ def view_my_leave_table(request):
         user = request.user
         leaves = Leave.objects.filter(user=user)
         employee = Employee.objects.filter(user=user).first()
-        print(leaves)
         dataset = dict()
         dataset['leave_list'] = leaves
         dataset['employee'] = employee

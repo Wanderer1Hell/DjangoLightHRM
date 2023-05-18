@@ -492,7 +492,7 @@ class Employee(models.Model):
         super().save(*args, **kwargs)  # call the parent save method
         # print(self.employeeid)
 class Document(models.Model):
-    employee = models.ForeignKey('employee', related_name='documents', on_delete=models.CASCADE)
+    employee = models.ForeignKey('employee', related_name='documents', on_delete=models.CASCADE, verbose_name='Сотрудник')
     document_file = models.FileField(_('Файл документа'), upload_to='documents/%Y/%m/%d/')
     filename = models.CharField(_('Название файла'), max_length=255)
     created = models.DateTimeField(verbose_name=_('Создано'), auto_now_add=True, null=True)

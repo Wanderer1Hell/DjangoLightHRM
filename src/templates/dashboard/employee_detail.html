@@ -113,6 +113,24 @@ span{
 }
 
 
+.btn-delete {
+    font-size: 13px;
+    border-radius: 10px;
+    padding: 7px 33px 7px;
+    border: 1px solid;
+    border-width: 1px;
+    background-color: #f7f7f7;
+    font-weight: bold;
+    opacity: 0.8;
+    border-color: #c7c7c7;
+    color: #8f8f8f;
+    margin-top: 20px;
+}
+    .btn-delete:hover {
+        border-color: #ef0101;
+        color: #ef0101;
+    }
+
 
 {% endblock %}<!-- STYLESHEETS -->
 
@@ -261,10 +279,8 @@ span{
                                             {% endif %}
 
                                             {% if request.user.is_superuser %}
-                                            <div>
-                                              <span><a class="add-edit" href="{% url 'dashboard:edit' employee.id %}">Редактировать</a></span>
-                                            </div>
-
+                                                <div><span>Последнее обновление - {{employee.updated|naturaltime }}</span></div>
+                                                <div><span><a class="add-edit" href="{% url 'dashboard:edit' employee.id %}">Редактировать</a></span></div>
                                             {% endif %}
 
                                           </div>
@@ -289,12 +305,7 @@ span{
                                             {% if employee.hometown %}
                                             <a class="list-group-item list-group-item-action" id="list-settings-list" data-toggle="list" href="" role="tab" aria-controls=""><span>Дата выдачи пропуска</span> <div>{{ employee.dateissued}}</div></a>
                                             {% endif %}
-
-
-                                           <div>
-                                            <span>Последнее обновление - {{employee.updated|naturaltime }}</span>
                                           </div>
-                                        
                                   </div>
                                 </div>
                               </div>
@@ -378,15 +389,10 @@ span{
                                             {% endif %}
 
                                             {% if request.user.is_superuser %}
-                                            <span><a class="add-edit" href="{% url 'dashboard:familyedit' family.id %}">Редактировать</a></span>
+                                                <div><span>Последнее обновление - {{family.updated|naturaltime }}</span></div>
+                                                <div><span><a class="add-edit" href="{% url 'dashboard:familyedit' family.id %}">Редактировать</a></span></div>
                                             {% endif %}
-                                          
                                           </div>
-
-                                           <div>
-                                            <span>Последнее обновление - {{family.updated|naturaltime }}</span>
-                                          </div>
-
                                         {% else %}
 
                                         <h4>
@@ -430,23 +436,18 @@ span{
 
 
                                             {% if request.user.is_superuser %}
-                                            <span><a class="add-edit" href="{% url 'dashboard:emergencyupdate' emergency.id %}">Редактировать</a></span>
+                                                <div><span>Последнее обновление - {{emergency.updated|naturaltime }}</span></div>
+                                                <div><span><a class="add-edit" href="{% url 'dashboard:emergencyupdate' emergency.id %}">Редактировать</a></span></div>
                                             {% endif %}
                                           </div>
 
-                                          <div>
-                                            <span>Последнее обновление - {{emergency.updated|naturaltime }}</span>
-                                          </div>
-
                                         {% else %}
-                                       
                                         <h4>
                                           {% if request.user.is_superuser %}Информация не найдена, для добавления нажмите <a href="{% url 'dashboard:emergencycreate' %}">здесь</a>
                                           {% else%}
                                           Информация не найдена. обратитесь к своему менеджеру по персоналу.
                                           {% endif %}
                                         </h4>
-
                                         {% endif %}
 
 
@@ -483,12 +484,9 @@ span{
                                             <a class="list-group-item list-group-item-action" id="list-settings-list" data-toggle="list" href="" role="tab" aria-controls=""><span>Оклад</span> <div>{{ bank.salary}}</div></a>
 
                                             {% if request.user.is_superuser %}
-                                            <span><a class="add-edit" href="{% url 'dashboard:accountedit' bank.id %}">Редактировать</a></span>
+                                                <div><span>Последнее обновление - {{bank.updated|naturaltime }}</span></div>
+                                                <div><span><a class="add-edit" href="{% url 'dashboard:accountedit' employee.id %}">Редактировать</a></span></div>
                                             {% endif %}
-
-                                            <div>
-                                              <span>Последнее обновление - {{bank.updated|naturaltime }}</span>
-                                            </div>
                                           </div>
                                         {% else %}
 
@@ -527,21 +525,23 @@ span{
                                                 <div class="list-group" id="list-tab" role="tablist">
                                                     <li>
                                                         <p><span>Добавлен: {{ document.created }}</span></p>
-                                                        <a class="list-group-item list-group-item-action" id="list-home-list" data-toggle="list" role="tab" href="{{ document.document_file.url }}" target="_blank">{{ document.filename }}</a>
+                                                        <div>
+                                                            <a class="list-group-item list-group-item-action" id="list-home-list" data-toggle="list" role="tab" href="{{ document.document_file.url }}" target="_blank" style="white-space: pre-wrap; font-weight: bold;">{{ document.filename }}</a>
+                                                        </div>
+                                                        <div style="margin-top: 10px;">
+                                                            <a href="{% url 'dashboard:documentdelete' document.id %}" class="btn-delete" >Удалить</a>
+                                                        </div>
+
                                                     </li>
                                                 </div>
                                             {% endfor %}
-                                        {% if request.user.is_superuser %}
-                                            <span><a class="add-edit" href="{% url 'dashboard:documentcreate' %}">Добавить</a></span>
-                                            {% endif %}
                                         </ul>
                                         {% if request.user.is_superuser %}
-                                            <span><a class="add-edit" href="{% url 'dashboard:accountedit' bank.id %}">Редактировать</a></span>
+                                            <div><span>Последнее обновление документов - {{ documents.last.updated|naturaltime }}</span></div>
+                                            <div><span><a class="add-edit" href="{% url 'dashboard:documentcreate' %}">Добавить</a></span></div>
                                             {% endif %}
                                         </ul>
-                                            <div>
-                                            <span>Последнее обновление документов - {{ documents.last.updated|naturaltime }}</span>
-                                          </div>
+
                                         {% else %}
                                         <h4>Документы не найдены. Добавить <a class="add-edit" href="{% url 'dashboard:documentcreate' %}">здесь</a>.</h4>
                                         {% endif %}
