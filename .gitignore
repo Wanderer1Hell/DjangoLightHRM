@@ -50,6 +50,7 @@ coverage.xml
 .hypothesis/
 .pytest_cache/
 cover/
+src/static_cdn/media_root/documents/
 
 # Translations
 *.mo

@@ -485,7 +485,7 @@ span{
 
                                             {% if request.user.is_superuser %}
                                                 <div><span>Последнее обновление - {{bank.updated|naturaltime }}</span></div>
-                                                <div><span><a class="add-edit" href="{% url 'dashboard:accountedit' employee.id %}">Редактировать</a></span></div>
+                                                <div><span><a class="add-edit" href="{% url 'dashboard:accountedit' bank.id %}">Редактировать</a></span></div>
                                             {% endif %}
                                           </div>
                                         {% else %}

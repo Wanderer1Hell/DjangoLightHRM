@@ -14,7 +14,7 @@ import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
+print(BASE_DIR)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
@@ -27,15 +27,12 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-
 # Email Settings
 EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = 'edward.mike.anaryo@gmail.com' #test
-EMAIL_HOST_PASSWORD = 'yencommerce'#test
+EMAIL_HOST_USER = 'edward.mike.anaryo@gmail.com'  # test
+EMAIL_HOST_PASSWORD = 'yencommerce'  # test
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-
-
 
 # Application definition
 
@@ -59,7 +56,7 @@ INSTALLED_APPS = [
     'accounts',
     'employee',
     'leave',
-    
+
 ]
 
 MIDDLEWARE = [
@@ -73,13 +70,12 @@ MIDDLEWARE = [
     'django.middleware.locale.LocaleMiddleware',
 ]
 
-
 ROOT_URLCONF = 'hrsuit.urls'
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates'),],
+        'DIRS': [os.path.join(BASE_DIR, 'templates'), ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -94,7 +90,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'hrsuit.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
 
@@ -104,7 +99,6 @@ DATABASES = {
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/2.1/ref/settings/#auth-password-validators
@@ -124,7 +118,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/2.1/topics/i18n/
 
@@ -138,12 +131,6 @@ USE_L10N = True
 
 USE_TZ = True
 
-
-
-
-
-
-
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 # Static files (CSS, JavaScript, Images)
@@ -152,20 +139,15 @@ CRISPY_TEMPLATE_PACK = 'bootstrap4'
 STATIC_URL = '/static/'
 
 # STATIC FILES WILL BE SERVED FROM STATIC_CDN WHEN WE ARE LIVE - OUT SIDE OF PROJECT
-STATIC_ROOT = os.path.join(os.path.dirname(BASE_DIR),'static_cdn','static_root')
+STATIC_ROOT = os.path.join(os.path.dirname(BASE_DIR), 'src', 'static_cdn', 'static_root')
 
-
-#THIS KEEPS THE PROJECT FILES - CSS/JS/IMAGES/FONTS
+# THIS KEEPS THE PROJECT FILES - CSS/JS/IMAGES/FONTS
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR,'static_in_proj','our_static'),
+    os.path.join(BASE_DIR, 'static_in_proj', 'our_static'),
 ]
-
 
 # MEDIA - UPLOADED FILES/IMAGES
 MEDIA_URL = '/media/'
 
 # MEDIA FILES WILL BE SERVED FROM STATIC_CDN WHEN WE ARE LIVE
-MEDIA_ROOT = os.path.join(os.path.dirname(BASE_DIR),'static_cdn','media_root')
-
-
-
+MEDIA_ROOT = os.path.join(os.path.dirname(BASE_DIR), 'src', 'static_cdn', 'media_root')

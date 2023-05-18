@@ -154,7 +154,7 @@
             <section class="container-fluid">
             	<section class="row">
 	            		<section class="col col-lg-12">
-	            			<a href="{{request.META.HTTP_REFERER|escape}}" style="color:#c1c1c1;">back</a>
+	            			<a href="{{request.META.HTTP_REFERER|escape}}" style="color:#c1c1c1;">Назад</a>
 	            		</section>
             	</section>
             	   <section class="row">
@@ -218,9 +218,9 @@
 					  	<form action="" method="GET">
 						    <div class="input-group">
 						      <span class="input-group-btn">
-						        <button class="btn btn-default" id = "stylebutton" type="button">Search</button>
+						        <button class="btn btn-default" id = "stylebutton" type="submit">Поиск</button>
 						      </span>
-						      <input type="search" value="{{request.GET.search}}" name="search" class="form-control" placeholder="Search by firstname,lastname...">
+						      <input type="search" value="{{request.GET.search}}" name="search" class="form-control" placeholder="Поиск по имени, фамилии...">
 						    </div><!-- /input-group -->
 					    </form>
 
@@ -276,12 +276,8 @@
 
 							      <td> 
 							      	<a href="{% url 'dashboard:employeeinfo' employee.id %}">
-							      	    view
+							      	    Подробнее
 							      	</a>
-							      	
-							        <a href="{% url 'dashboard:edit' employee.id %}">
-							       	edit
-							        </a>
 
 							      </td>
 							    </tr>

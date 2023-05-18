@@ -487,7 +487,7 @@ class Employee(models.Model):
 
         get_id = self.employeeid  # grab employee_id number from submitted form field
         data = code_format(get_id)
-        self.employeeid = data  # pass the new code to the employee_id as its orifinal or actual code
+        self.employeeid = data  # pass the new code to the employee_id as its original or actual code
 
         super().save(*args, **kwargs)  # call the parent save method
         # print(self.employeeid)
@@ -501,3 +501,4 @@ class Document(models.Model):
     class Meta:
         verbose_name = _('Document')
         verbose_name_plural = _('Documents')
+
