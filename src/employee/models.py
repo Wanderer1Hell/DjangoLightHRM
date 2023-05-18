@@ -484,8 +484,20 @@ class Employee(models.Model):
         added : March, 03 2019 - 11:08 PM
 
         '''
+
         get_id = self.employeeid  # grab employee_id number from submitted form field
         data = code_format(get_id)
         self.employeeid = data  # pass the new code to the employee_id as its orifinal or actual code
+
         super().save(*args, **kwargs)  # call the parent save method
         # print(self.employeeid)
+class Document(models.Model):
+    employee = models.ForeignKey('employee', related_name='documents', on_delete=models.CASCADE)
+    document_file = models.FileField(_('Файл документа'), upload_to='documents/%Y/%m/%d/')
+    filename = models.CharField(_('Название файла'), max_length=255)
+    created = models.DateTimeField(verbose_name=_('Создано'), auto_now_add=True, null=True)
+    updated = models.DateTimeField(verbose_name=_('Обновлено'), auto_now=True, null=True)
+
+    class Meta:
+        verbose_name = _('Document')
+        verbose_name_plural = _('Documents')

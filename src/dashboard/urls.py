@@ -24,6 +24,11 @@ urlpatterns = [
     #Bank
     path('bank/create/',views.dashboard_bank_create,name='bankaccountcreate'),
 
+    # Document
+    path('document/create/', views.dashboard_document_create, name='documentcreate'),
+    path('document/delete/<int:id>/', views.dashboard_document_delete, name='documentdelete'),
+    path('document/update/<int:id>', views.dashboard_document_edit, name='documentedit'),
+
     #---work-on-edit-view------#
     path('bank/edit/<int:id>/',views.employee_bank_account_update,name='accountedit'),
     path('leave/apply/',views.leave_creation,name='createleave'),

@@ -8,7 +8,8 @@ import datetime
 from django.core.mail import send_mail
 from django.contrib import messages
 from django.urls import reverse
-from employee.forms import EmployeeCreateForm, EmergencyCreateForm, FamilyCreateForm, BankAccountCreation
+from employee.forms import EmployeeCreateForm, EmergencyCreateForm, FamilyCreateForm, BankAccountCreation, \
+    DocumentCreateForm
 from leave.models import Leave
 from employee.models import *
 from leave.forms import LeaveCreationForm
@@ -200,7 +201,6 @@ def employee_edit_data(request, id):
                     region_value = 'обл.' + region_value
             instance.Region = region_value
 
-
             district_value = request.POST.get('District')
             if district_value:
                 if not district_value.startswith('р-н.'):
@@ -252,7 +252,6 @@ def employee_edit_data(request, id):
             instance.lastwork = request.POST.get('lastwork')
             instance.position = request.POST.get('position')
 
-
             department_id = request.POST.get('department')
             department = Department.objects.get(id=department_id)
             instance.department = department
@@ -268,7 +267,6 @@ def employee_edit_data(request, id):
             if 'image' in request.FILES:
                 instance.image = request.FILES['image']
             instance.bio = request.POST.get('bio')
-
 
             # now = datetime.datetime.now()
             # instance.created = now
@@ -300,13 +298,16 @@ def dashboard_employee_info(request, id):
     employee_emergency_instance = Emergency.objects.filter(employee=employee).first()
     employee_family_instance = Relationship.objects.filter(employee=employee).first()
     bank_instance = Bank.objects.filter(employee=employee).first()
+    documents = Document.objects.filter(employee=employee)
 
     dataset = dict()
     dataset['employee'] = employee
     dataset['emergency'] = employee_emergency_instance
     dataset['family'] = employee_family_instance
     dataset['bank'] = bank_instance
+    dataset['documents'] = documents
     dataset['title'] = 'profile - {0}'.format(employee.get_full_name)
+    print(dataset)
     return render(request, 'dashboard/employee_detail.html', dataset)
 
 
@@ -406,7 +407,6 @@ def dashboard_family_create(request):
             instance.tel = request.POST.get('tel')
             instance.children = request.POST.get('children')
 
-
             # now = datetime.datetime.now()
             # instance.created = now
             # instance.updated = now
@@ -452,7 +452,6 @@ def dashboard_family_edit(request, id):
             # Recently added 29/03/19
             instance.nextofkin = request.POST.get('nextofkin')
             instance.relationship = request.POST.get('relationship')
-
 
             # now = datetime.datetime.now()
             # instance.created = now
@@ -515,7 +514,7 @@ def dashboard_bank_create(request):
     form = BankAccountCreation()
 
     dataset['form'] = form
-    dataset['title'] = 'Account Creation Form'
+    dataset['title'] = 'Банковские данные'
     return render(request, 'dashboard/bank_account_create_form.html', dataset)
 
 
@@ -557,6 +556,49 @@ def employee_bank_account_update(request, id):
     dataset['form'] = form
     dataset['title'] = 'Данные об условиях труда (заработная плата)'
     return render(request, 'dashboard/bank_account_create_form.html', dataset)
+
+
+from django.contrib.auth.decorators import login_required
+
+
+def dashboard_document_create(request):
+    if not (request.user.is_authenticated and request.user.is_superuser and request.user.is_staff):
+        return redirect('/')
+
+    if request.method == 'POST':
+        form = DocumentCreateForm(request.POST, request.FILES)
+        if form.is_valid():
+            instance = form.save(commit=False)
+            document = request.POST.get('employee')
+            document_object = get_object_or_404(Employee, id=document)
+
+            instance.employee = document_object
+            instance.save()
+
+            messages.success(request, 'Документ успешно создан',
+                             extra_tags='alert alert-success alert-dismissible show')
+            return redirect('dashboard:documentcreate')
+        else:
+            messages.error(request, 'Ошибка при создании документа',
+                           extra_tags='alert alert-warning alert-dismissible show')
+            return redirect('dashboard:documentcreate')
+
+    form = DocumentCreateForm()
+    documents = Document.objects.all()
+    dataset = {
+        'form': form,
+        'title': 'Добавить документ',
+        'documents': documents,
+    }
+    return render(request, 'dashboard/document_create_form.html', dataset)
+
+def dashboard_document_delete(request, id):
+    document = get_object_or_404(Document, id=id)
+    document.delete()
+    return redirect('dashboard:documentcreate')
+
+def dashboard_document_edit(request, id):
+    pass
 
 
 # ---------------------LEAVE-------------------------------------------
@@ -757,7 +799,8 @@ def birthday_this_month(request):
 
     employees = Employee.objects.birthdays_current_month()
     locale.setlocale(locale.LC_ALL, 'ru_RU.UTF-8')
-    month = datetime.date.today().strftime('%B').capitalize()  # am using this to get the month for template rendering- making it dynamic
+    month = datetime.date.today().strftime(
+        '%B').capitalize()  # am using this to get the month for template rendering- making it dynamic
     context = {
         'birthdays': employees,
         'month': month,

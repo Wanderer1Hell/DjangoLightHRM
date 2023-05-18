@@ -99,7 +99,18 @@ span{
   color:#e6e4e4;
 }
 
+.no-bullets {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
 
+.add-edit {
+  -webkit-font-smoothing: antialiased;
+  font-family: "Roboto","Helvetica Neue",Arial,sans-serif;
+  font-weight: 400;
+  font-size: 17px;
+}
 
 
 
@@ -167,7 +178,7 @@ span{
               					  		<li class="list-group-item"><span>Статус</span><div> Активный</div></li>
               					  		{% endif %}
                               <div>
-                                <span style="font-style: italic;">updated - {{employee.updated|naturaltime}}</span>
+                                <span style="font-style: italic;">Обновлено - {{employee.updated|naturaltime}}</span>
                               </div>
                               
             							</ul>
@@ -251,7 +262,7 @@ span{
 
                                             {% if request.user.is_superuser %}
                                             <div>
-                                              <span><a href="{% url 'dashboard:edit' employee.id %}">Редактировать</a></span>
+                                              <span><a class="add-edit" href="{% url 'dashboard:edit' employee.id %}">Редактировать</a></span>
                                             </div>
 
                                             {% endif %}
@@ -306,11 +317,8 @@ span{
                                 <section class="container-fluid">
 
                                    <div class="row">
-                                        
                                         {% if family %}
-                                          
 
-                                          
                                           <div class="list-group" id="list-tab" role="tablist">
                                             <a class="list-group-item list-group-item-action" id="list-home-list" data-toggle="list" href="" role="tab" aria-controls=""><span>Статус</span> <div>{{ family.status }}</div>
                                             </a>
@@ -370,7 +378,7 @@ span{
                                             {% endif %}
 
                                             {% if request.user.is_superuser %}
-                                            <span><a href="{% url 'dashboard:familyedit' family.id %}">Редактировать</a></span>
+                                            <span><a class="add-edit" href="{% url 'dashboard:familyedit' family.id %}">Редактировать</a></span>
                                             {% endif %}
                                           
                                           </div>
@@ -422,7 +430,7 @@ span{
 
 
                                             {% if request.user.is_superuser %}
-                                            <span><a href="{% url 'dashboard:emergencyupdate' emergency.id %}">Редактировать</a></span>
+                                            <span><a class="add-edit" href="{% url 'dashboard:emergencyupdate' emergency.id %}">Редактировать</a></span>
                                             {% endif %}
                                           </div>
 
@@ -475,14 +483,12 @@ span{
                                             <a class="list-group-item list-group-item-action" id="list-settings-list" data-toggle="list" href="" role="tab" aria-controls=""><span>Оклад</span> <div>{{ bank.salary}}</div></a>
 
                                             {% if request.user.is_superuser %}
-                                            <span><a href="{% url 'dashboard:accountedit' bank.id %}">Редактировать</a></span>
+                                            <span><a class="add-edit" href="{% url 'dashboard:accountedit' bank.id %}">Редактировать</a></span>
                                             {% endif %}
 
                                             <div>
                                               <span>Последнее обновление - {{bank.updated|naturaltime }}</span>
                                             </div>
-
-
                                           </div>
                                         {% else %}
 
@@ -501,26 +507,49 @@ span{
                             </div>
                           </div>
                         </div>
-                        <!-- /BANK ACCOUNT -->
-                     <div class="panel panel-default">
-                          <div class="panel-heading" role="tab" id="headingOne">
-                            <h4 class="panel-title">
-                              <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                                ДОКУМЕНТЫ
-                              </a>
-                            </h4>
-                          </div>
-                         <div id="collapseFour" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingFour">
+
+                        <!-- /DOCUMENTS -->
+                         <div class="panel panel-default">
+                            <div class="panel-heading" role="tab" id="headingDocuments">
+                                <h4 class="panel-title">
+                                    <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseDocuments" aria-expanded="false" aria-controls="collapseDocuments">
+                                        ДОКУМЕНТЫ
+                                    </a>
+                                </h4>
+                            </div>
+                        <div id="collapseDocuments" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingDocuments">
                             <div class="panel-body">
-                              <section class="container-fluid">
-
-                                   <div class="row">
-
-
-                      </div><!-- /ACCORDION PARENT -->
-
-
-
+                                <section class="container-fluid">
+                                    <div class="row">
+                                        {% if documents %}
+                                        <ul class="list-group no-bullets">
+                                            {% for document in documents %}
+                                                <div class="list-group" id="list-tab" role="tablist">
+                                                    <li>
+                                                        <p><span>Добавлен: {{ document.created }}</span></p>
+                                                        <a class="list-group-item list-group-item-action" id="list-home-list" data-toggle="list" role="tab" href="{{ document.document_file.url }}" target="_blank">{{ document.filename }}</a>
+                                                    </li>
+                                                </div>
+                                            {% endfor %}
+                                        {% if request.user.is_superuser %}
+                                            <span><a class="add-edit" href="{% url 'dashboard:documentcreate' %}">Добавить</a></span>
+                                            {% endif %}
+                                        </ul>
+                                        {% if request.user.is_superuser %}
+                                            <span><a class="add-edit" href="{% url 'dashboard:accountedit' bank.id %}">Редактировать</a></span>
+                                            {% endif %}
+                                        </ul>
+                                            <div>
+                                            <span>Последнее обновление документов - {{ documents.last.updated|naturaltime }}</span>
+                                          </div>
+                                        {% else %}
+                                        <h4>Документы не найдены. Добавить <a class="add-edit" href="{% url 'dashboard:documentcreate' %}">здесь</a>.</h4>
+                                        {% endif %}
+                                    </div>
+                                </section>
+                            </div>
+                        </div>
+                    </div>
                 		</section>
                  	</section><!-- /Row -->
 

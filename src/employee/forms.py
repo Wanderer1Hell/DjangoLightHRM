@@ -1,5 +1,5 @@
 from django import forms
-from employee.models import Role, Department, Nationality, Religion, Bank, Emergency, Relationship, Employee
+from employee.models import Role, Department, Nationality, Religion, Bank, Emergency, Relationship, Employee, Document
 from django.contrib.auth.models import User
 
 
@@ -72,3 +72,9 @@ class BankAccountCreation(forms.ModelForm):
     class Meta:
         model = Bank
         fields = ['employee', 'name', 'branch', 'account', 'salary']
+
+
+class DocumentCreateForm(forms.ModelForm):
+    class Meta:
+        model = Document
+        fields = ['employee', 'document_file', 'filename']
