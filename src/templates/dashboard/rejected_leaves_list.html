@@ -179,12 +179,12 @@
                 	<div class="table-responsive table-shadow">
                 		<div class="text-center table-description">
                 			<h4 class="title-h3" style="color: #60a0b3 !important;
-    						text-shadow: 1px 0px rgba(0,0,0,0.11)">ОТМЕНЕННЫЕ ОТПУСКА</h4>
+    						text-shadow: 1px 0px rgba(0,0,0,0.11)">ОТЛОЖЕННЫЕ ОТПУСКА</h4>
                 		</div>
 
                 		<section class="total-leaves-count">
                 			{% if leave_list_rejected %}
-                			<p>Total rejected leaves - <span>{{ leave_list_rejected.count }}</span></p>
+                			<p>Всего отложенных отпусков <span>{{ leave_list_rejected.count }}</span></p>
                 			{% endif %}
                 		</section>
                 	
@@ -192,7 +192,7 @@
 							  <thead>
 							    <tr>
 							      <!-- <th scope="col">#</th> -->
-							      <th scope="col">Работник</th>
+							      <th scope="col">Сотрудник</th>
 							      <th scope="col">Тип</th>
 							      <th scope="col">День (дни)</th>
 							      <th scope="col">Статус</th>
@@ -203,20 +203,16 @@
 							  	{% for leave in leave_list_rejected %}
 							    <tr>
 
-							      <td>{{ leave.user }}</td>
+							      <td>{{ leave.employee }}</td>
 							      <td>{{ leave.leavetype}}</td>
 							      <td>{{ leave.leave_days }}</td>
 							      <td>{{ leave.status }}</td>
 
 							      <td> 
 							      	<a href="{% url 'dashboard:userleaveview' leave.id %}">
-							      	    <span>view</span>
+							      	    <span>Просмотр</span>
 							      	</a>
-							      	
-							      	{% if leave.is_rejected %}
-							      		<a href="{% url 'dashboard:unreject' leave.id %}">Отказать</a>
-							      	{% endif %}
-							        
+
 							      </td>
 							    </tr>
 

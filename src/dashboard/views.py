@@ -11,11 +11,12 @@ from django.core.mail import send_mail
 from django.contrib import messages
 from django.urls import reverse
 from employee.forms import EmployeeCreateForm, EmergencyCreateForm, FamilyCreateForm, BankAccountCreation, \
-    DocumentCreateForm
-from leave.models import Leave
+    DocumentCreateForm, CompanyForm
 from employee.models import *
-from leave.forms import LeaveCreationForm
+from employee.forms import LeaveCreationForm
 import locale
+
+from employee.models import Employee
 
 
 # from leave.forms import CommentForm
@@ -35,8 +36,7 @@ def dashboard(request):
     employees = Employee.objects.all()
     leaves = Leave.objects.all_pending_leaves()
     employees_birthday = Employee.objects.birthdays_current_month()
-    staff_leaves = Leave.objects.filter(user=user)
-
+    staff_leaves = Leave.objects.filter(employee__user=user)
     dataset['employees'] = employees
     dataset['leaves'] = leaves
     dataset['employees_birthday'] = employees_birthday
@@ -640,18 +640,18 @@ def leave_creation(request):
             instance.save()
 
             # print(instance.defaultdays)
-            messages.success(request, 'Запрос на отпуск отправлен, ожидайте ответа менеджера по персоналу',
+            messages.success(request, 'Отпуск сохранён',
                              extra_tags='alert alert-success alert-dismissible show')
             return redirect('dashboard:createleave')
 
-        messages.error(request, 'Не получилось подать заявление на отпуск, пожалуйста, проверьте даты',
+        messages.error(request, 'Не получилось сохранить отпуск, пожалуйста, проверьте даты',
                        extra_tags='alert alert-warning alert-dismissible show')
         return redirect('dashboard:createleave')
 
     dataset = dict()
     form = LeaveCreationForm()
     dataset['form'] = form
-    dataset['title'] = 'Заявление на отпуск'
+    dataset['title'] = 'Сохранить отпуск сотрудника'
     return render(request, 'dashboard/create_leave.html', dataset)
 
 
@@ -707,14 +707,13 @@ def leaves_approved_list(request):
 
 
 def leaves_view(request, id):
-    if not (request.user.is_authenticated):
+    if not request.user.is_authenticated:
         return redirect('/')
 
     leave = get_object_or_404(Leave, id=id)
-    employee = Employee.objects.filter(user=leave.user)[0]
+    employee = leave.employee
     return render(request, 'dashboard/leave_detail_view.html', {'leave': leave, 'employee': employee,
-                                                                'title': '{0}-{1} leave'.format(leave.user.username,
-                                                                                                leave.status)})
+                                                                'title': f'{employee.user.username}-{leave.status} leave'})
 
 
 def approve_leave(request, id):
@@ -798,7 +797,6 @@ def unreject_leave(request, id):
     return redirect('dashboard:leavesrejected')
 
 
-# Rabotec staffs leaves table user only
 def view_my_leave_table(request):
     # work on the logics
     if request.user.is_authenticated:
@@ -830,3 +828,33 @@ def birthday_this_month(request):
         'title': 'Birthdays'
     }
     return render(request, 'dashboard/birthdays_this_month.html', context)
+
+
+# Organizational data
+def company_list(request):
+    companies = Company.objects.all()
+    return render(request, 'dashboard/company_list.html', {'companies': companies})
+
+
+def company_create_or_update(request, id=None):
+    company = None
+    if id:
+        company = get_object_or_404(Company, id=id)
+
+    if request.method == 'POST':
+        form = CompanyForm(request.POST, instance=company)
+        if form.is_valid():
+            form.save()
+            return redirect('dashboard:companylist')
+    else:
+        form = CompanyForm(instance=company)
+
+    return render(request, 'dashboard/company_create_or_update.html', {'form': form})
+
+
+def company_delete(request, id):
+    company = get_object_or_404(Company, id=id)
+    if request.method == 'POST':
+        company.delete()
+        return redirect('dashboard:companylist')
+    return render(request, 'dashboard/company_delete.html', {'company': company})

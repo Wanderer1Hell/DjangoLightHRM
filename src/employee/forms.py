@@ -1,5 +1,8 @@
+from datetime import datetime
+
 from django import forms
-from employee.models import Role, Department, Nationality, Religion, Bank, Emergency, Relationship, Employee, Document
+from employee.models import Role, Department, Nationality, Religion, Bank, Emergency, Relationship, Employee, Document, \
+    Leave, Company
 from django.contrib.auth.models import User
 
 
@@ -74,7 +77,41 @@ class BankAccountCreation(forms.ModelForm):
         fields = ['employee', 'name', 'branch', 'account', 'salary']
 
 
+class LeaveCreationForm(forms.ModelForm):
+    reason = forms.CharField(
+        required=False,
+        widget=forms.Textarea(attrs={'rows': 4, 'cols': 40}),
+        label='Причина'
+    )
+
+    class Meta:
+        model = Leave
+        exclude = ['defaultdays', 'hrcomments', 'status', 'is_approved', 'updated', 'created']
+        fields = ['employee', 'leavetype', 'startdate', 'enddate', 'reason']
+
+
+def clean_enddate(self):
+    enddate = self.cleaned_data['Дата окончания']
+    startdate = self.cleaned_data['Дата начала']
+    today_date = datetime.date.today()
+
+    if (startdate or enddate) < today_date:  # both dates must not be in the past
+        raise forms.ValidationError("Выбранные даты неверны, пожалуйста, выберите еще раз")
+
+    elif startdate >= enddate:  # TRUE -> FUTURE DATE > PAST DATE,FALSE other wise
+        raise forms.ValidationError("Выбранные даты неверны")
+
+    return enddate
+
+
 class DocumentCreateForm(forms.ModelForm):
     class Meta:
         model = Document
         fields = ['employee', 'document_file', 'filename']
+
+
+class CompanyForm(forms.ModelForm):
+    class Meta:
+        model = Company
+        fields = ['id', 'name', 'leader_lastname', 'leader_name', 'leader_namemiddle', 'position']
+

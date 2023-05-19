@@ -1,11 +1,10 @@
 import datetime
 from employee.utility import code_format
 from django.db import models
-from employee.managers import EmployeeManager
+from employee.managers import EmployeeManager, LeaveManager
 from phonenumber_field.modelfields import PhoneNumberField
 from django.utils.translation import gettext as _
 from django.contrib.auth.models import User
-from leave.models import Leave
 
 
 # Create your models here.
@@ -77,8 +76,6 @@ class Religion(models.Model):
 
     def __str__(self):
         return self.name
-
-
 
 
 class Bank(models.Model):
@@ -346,28 +343,39 @@ class Employee(models.Model):
     Corps = models.CharField(_('Корпус'), max_length=125, null=True, blank=True)
     Apartment = models.CharField(_('Квартира'), max_length=125, null=True, blank=True)
     residence = models.CharField(_('Текущее место жительства'), max_length=125, null=False, blank=False)
-    religion = models.ForeignKey(Religion, verbose_name=_('Гражданство'), on_delete=models.SET_NULL, null=True,default=None)
-    nationality = models.ForeignKey(Nationality, verbose_name=_('Национальность'), on_delete=models.SET_NULL, null=True,default=None)
-    Resolution = models.CharField(_('Разрешение на работу №'), help_text='Разрешение на работу иностранного сотрудника',max_length=125, null=True, blank=True)
+    religion = models.ForeignKey(Religion, verbose_name=_('Гражданство'), on_delete=models.SET_NULL, null=True,
+                                 default=None)
+    nationality = models.ForeignKey(Nationality, verbose_name=_('Национальность'), on_delete=models.SET_NULL, null=True,
+                                    default=None)
+    Resolution = models.CharField(_('Разрешение на работу №'), help_text='Разрешение на работу иностранного сотрудника',
+                                  max_length=125, null=True, blank=True)
     ssnitnumber = models.CharField(_('СНИЛС'), max_length=30, null=True, blank=True)
     tinnumber = models.CharField(_('ИНН'), max_length=15, null=True, blank=True)
-    tel = PhoneNumberField(default='+79', null=False, blank=False, verbose_name='Номер телефона',help_text='Введите номер с кодом страны')
+    tel = PhoneNumberField(default='+79', null=False, blank=False, verbose_name='Номер телефона',
+                           help_text='Введите номер с кодом страны')
     email = models.CharField(_('Email'), max_length=255, default=None, blank=True, null=True)
     # region = models.CharField(_('Страна'),max_length=20,default=GREATER,choices=GHANA_REGIONS,blank=False,null=True)
 
-    education = models.CharField(_('Образование'), help_text='Уровень образования', max_length=38, default=SENIORHIGH,choices=EDUCATIONAL_LEVEL, blank=False, null=True)
+    education = models.CharField(_('Образование'), help_text='Уровень образования', max_length=38, default=SENIORHIGH,
+                                 choices=EDUCATIONAL_LEVEL, blank=False, null=True)
     lastwork = models.CharField(_('Последнее место работы'), max_length=125, null=True, blank=True)
-    position = models.CharField(_('Занимаемая должность'), help_text='Занимаемая должность на последнем месте работы?',max_length=255, null=True, blank=True)
+    position = models.CharField(_('Занимаемая должность'), help_text='Занимаемая должность на последнем месте работы?',
+                                max_length=255, null=True, blank=True)
 
     # COMPANY DATA
-    department = models.ForeignKey(Department, verbose_name=_('Департамент'), on_delete=models.SET_NULL, null=True,default=None)
+    department = models.ForeignKey(Department, verbose_name=_('Департамент'), on_delete=models.SET_NULL, null=True,
+                                   default=None)
     role = models.ForeignKey(Role, verbose_name=_('Должность'), on_delete=models.SET_NULL, null=True, default=None)
     startdate = models.DateField(_('Дата приема на работу'), help_text='Дата по приказу', blank=False, null=True)
-    employeetype = models.CharField(_('Тип сотрудника'), max_length=21, default=FULL_TIME, choices=EMPLOYEETYPE,blank=False, null=True)
+    employeetype = models.CharField(_('Тип сотрудника'), max_length=21, default=FULL_TIME, choices=EMPLOYEETYPE,
+                                    blank=False, null=True)
     employeeid = models.CharField(_('Табельный номер сотрудника'), max_length=10, null=True, blank=True)
     dateissued = models.DateField(_('Дата выдачи пропуска'), help_text='Дата выдачи пропуска', blank=False, null=True)
-    image = models.FileField(_('Изображение профиля'), upload_to='profiles', default='default.png', blank=True, null=True, help_text='Загрузи изображения не более 2.0 Мб')  # work on path username-date/image
-    bio = models.CharField(_('Заметки'), help_text='Дополнительная информация', max_length=255, default='', null=True, blank=True)
+    image = models.FileField(_('Изображение профиля'), upload_to='profiles', default='default.png', blank=True,
+                             null=True,
+                             help_text='Загрузи изображения не более 2.0 Мб')  # work on path username-date/image
+    bio = models.CharField(_('Заметки'), help_text='Дополнительная информация', max_length=255, default='', null=True,
+                           blank=True)
 
     # app related
     is_blocked = models.BooleanField(_('Is Blocked'), help_text='button to toggle employee block and unblock',
@@ -421,7 +429,6 @@ class Employee(models.Model):
                           self.Apartment] if attr]
 
         return ', '.join(address_parts)
-
 
     @property
     def get_age(self):
@@ -491,8 +498,122 @@ class Employee(models.Model):
 
         super().save(*args, **kwargs)  # call the parent save method
         # print(self.employeeid)
+
+
+SICK = 'sick'
+CASUAL = 'casual'
+EMERGENCY = 'emergency'
+STUDY = 'study'
+BIRTH = 'birth'
+OTHER = 'other'
+
+LEAVE_TYPE = (
+    (SICK, 'ежегодный основной оплачиваемый отпуск'),
+    (CASUAL, 'ежегодный дополнительный оплачиваемый отпуск'),
+    (EMERGENCY, 'отпуск без сохранения заработной платы'),
+    (STUDY, 'учебный отпуск'),
+    (BIRTH, 'отпуск по беременности и родам'),
+    (OTHER, 'другой')
+)
+
+DAYS = 140
+
+
+class Leave(models.Model):
+    employee = models.ForeignKey('employee', on_delete=models.CASCADE, default=1, verbose_name='Сотрудник')
+    startdate = models.DateField(verbose_name=_('Дата начала'), null=True, blank=False)
+    enddate = models.DateField(verbose_name=_('Дата окончания'), null=True, blank=False)
+    leavetype = models.CharField(choices=LEAVE_TYPE, max_length=25, default=SICK, null=True, blank=False,
+                                 verbose_name='Тип отпуска')
+    reason = models.CharField(max_length=255, help_text='Добавить дополнительную информацию для отпуска', null=True,
+                              blank=True, verbose_name='Примечание')
+    defaultdays = models.PositiveIntegerField(verbose_name=_('Количество дней отпуска в год счетчик'), default=DAYS,
+                                              null=True, blank=True)
+
+    # hrcomments = models.ForeignKey('CommentLeave') #hide
+
+    status = models.CharField(max_length=12, default='pending')  # pending,approved,rejected,cancelled
+    is_approved = models.BooleanField(default=False)  # hide
+
+    updated = models.DateTimeField(auto_now=True, auto_now_add=False)
+    created = models.DateTimeField(auto_now=False, auto_now_add=True)
+
+    objects = LeaveManager()
+
+    class Meta:
+        verbose_name = _('Leave')
+        verbose_name_plural = _('Leaves')
+        ordering = ['-created']  # recent objects
+
+    def __str__(self):
+        return ('{0} - {1}'.format(self.leavetype, self.user))
+
+    @property
+    def pretty_leave(self):
+        '''
+		i don't like the __str__ of leave object - this is a pretty one :-)
+		'''
+        leave = self.leavetype
+        user = self.employee.user
+        employee = user.employee_set.first().get_full_name
+        return ('{0} - {1}'.format(employee, leave))
+
+    @property
+    def leave_days(self):
+        days_count = ''
+        startdate = self.startdate
+        enddate = self.enddate
+        if startdate > enddate:
+            return
+        dates = (enddate - startdate)
+        return dates.days
+
+    @property
+    def leave_approved(self):
+        return self.is_approved == True
+
+    @property
+    def approve_leave(self):
+        if not self.is_approved:
+            self.is_approved = True
+            self.status = 'approved'
+            self.save()
+
+    @property
+    def unapprove_leave(self):
+        if self.is_approved:
+            self.is_approved = False
+            self.status = 'pending'
+            self.save()
+
+    @property
+    def leaves_cancel(self):
+        if self.is_approved or not self.is_approved:
+            self.is_approved = False
+            self.status = 'cancelled'
+            self.save()
+
+    # def uncancel_leave(self):
+    # 	if  self.is_approved or not self.is_approved:
+    # 		self.is_approved = False
+    # 		self.status = 'pending'
+    # 		self.save()
+
+    @property
+    def reject_leave(self):
+        if self.is_approved or not self.is_approved:
+            self.is_approved = False
+            self.status = 'rejected'
+            self.save()
+
+    @property
+    def is_rejected(self):
+        return self.status == 'rejected'
+
+
 class Document(models.Model):
-    employee = models.ForeignKey('employee', related_name='documents', on_delete=models.CASCADE, verbose_name='Сотрудник')
+    employee = models.ForeignKey('employee', related_name='documents', on_delete=models.CASCADE,
+                                 verbose_name='Сотрудник')
     document_file = models.FileField(_('Файл документа'), upload_to='documents/%Y/%m/%d/')
     filename = models.CharField(_('Название файла'), max_length=255)
     created = models.DateTimeField(verbose_name=_('Создано'), auto_now_add=True, null=True)
@@ -502,3 +623,17 @@ class Document(models.Model):
         verbose_name = _('Document')
         verbose_name_plural = _('Documents')
 
+
+class Company(models.Model):
+    name = models.CharField(max_length=100, verbose_name='Наименование организации')
+    leader_lastname = models.CharField(max_length=100, verbose_name='Фамилия руководителя')
+    leader_name = models.CharField(max_length=100, verbose_name='Имя руководителя')
+    leader_namemiddle = models.CharField(max_length=100, verbose_name='Отчество руководителя')
+    position = models.CharField(max_length=100, verbose_name='Должность')
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = 'Компания'
+        verbose_name_plural = 'Компании'

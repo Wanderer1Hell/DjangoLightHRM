@@ -142,15 +142,15 @@ span{
                                     <div class="list-group" id="list-tab" role="tablist">
                                             <a class="list-group-item list-group-item-action" id="list-home-list" data-toggle="list" href="" role="tab" aria-controls=""><span>Сотрудник</span> <div>{{ employee.get_full_name }}</div>
                                             </a>
-                                            <a class="list-group-item list-group-item-action" id="list-profile-list" data-toggle="list" href="" role="tab" aria-controls=""><span>Дата начала работы</span> <div> Start Date {{ leave.startdate }}</div>
+                                            <a class="list-group-item list-group-item-action" id="list-profile-list" data-toggle="list" href="" role="tab" aria-controls=""><span>Дата начала </span> <div> {{ leave.startdate }}</div>
                                             </a>
-                                            <a class="list-group-item list-group-item-action" id="list-messages-list" data-toggle="list" href="" role="tab" aria-controls=""><span>Дата увольнения</span><div>{{ leave.enddate}}</div>
+                                            <a class="list-group-item list-group-item-action" id="list-messages-list" data-toggle="list" href="" role="tab" aria-controls=""><span>Дата окончания</span><div>{{ leave.enddate}}</div>
                                             </a>
                                             <a class="list-group-item list-group-item-action" id="list-settings-list" data-toggle="list" href="" role="tab" aria-controls=""><span>Длительность</span> <div>{{ leave.leave_days}}</div>
                                             </a>
-                                            <a class="list-group-item list-group-item-action" id="list-settings-list" data-toggle="list" href="" role="tab" aria-controls=""><span>Тип</span> <div>{{ leave.leavetype}}</div>
+                                            <a class="list-group-item list-group-item-action" id="list-settings-list" data-toggle="list" href="" role="tab" aria-controls=""><span>Тип отпуска</span> <div>{{ leave.leavetype}}</div>
                                             </a>
-                                            <a class="list-group-item list-group-item-action" id="list-settings-list" data-toggle="list" href="" role="tab" aria-controls=""><span>Причина</span> <div>{{ leave.reason}}</div>
+                                            <a class="list-group-item list-group-item-action" id="list-settings-list" data-toggle="list" href="" role="tab" aria-controls=""><span>Примечание</span> <div>{{ leave.reason}}</div>
                                             </a>
                                              <a class="list-group-item list-group-item-action" id="list-settings-list" data-toggle="list" href="" role="tab" aria-controls=""><span>Статус</span> <div>{{ leave.status}}</div>
                                              </a>
