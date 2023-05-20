@@ -15,6 +15,8 @@ from employee.forms import EmployeeCreateForm, EmergencyCreateForm, FamilyCreate
 from employee.models import *
 from employee.forms import LeaveCreationForm
 import locale
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import get_user_model
 
 from employee.models import Employee
 
@@ -86,10 +88,7 @@ def dashboard_employees_create(request):
         form = EmployeeCreateForm(request.POST, request.FILES)
         if form.is_valid():
             instance = form.save(commit=False)
-            user = request.POST.get('user')
-            assigned_user = User.objects.get(id=user)
-
-            instance.user = assigned_user
+            instance.user = request.user
 
             instance.title = request.POST.get('title')
             instance.image = request.FILES.get('image')
@@ -131,34 +130,11 @@ def dashboard_employees_create(request):
             instance.employeeid = request.POST.get('employeeid')
             instance.dateissued = request.POST.get('dateissued')
 
-            # now = datetime.datetime.now()
-            # instance.created = now
-            # instance.updated = now
-
             instance.save()
-
-            # employee_email = instance.user.email
-            # email_subject = 'Humanly Access Credentials'
-            # email_message = 'You have been added to Rabotecgroup Staff List,username and password'
-            # from_email = settings.EMAIL_HOST_USER
-            # to_email = [employee_email]
-            '''
-			Work on it - user@gmail.com & user@rabotecgroup.com -> send Template
-			'''
-            # send_mail(
-            # 	email_subject,
-            # 	email_message,
-            # 	from_email,
-            # 	to_email,
-            # 	fail_silently=True
-            # 	)
-
-            # Send email - username & password to employee, how to get users decrypted password ?
 
             return redirect('dashboard:employees')
         else:
-            messages.error(request, 'Попытка создать дубликат сотрудника с учетной записью одного пользователя  ',
-                           extra_tags='alert alert-warning alert-dismissible show')
+            messages.error(request, 'Ошибка при создании сотрудника')
             return redirect('dashboard:employeecreate')
 
     dataset = dict()

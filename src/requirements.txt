@@ -88,7 +88,8 @@ sqlparse==0.4.4
 tinycss2==1.2.1
 tweepy==4.14.0
 txaio==23.1.1
-urllib3==2.0.2
+urllib3
+crispy_bootstrap4
 virtualenv==20.23.0
 virtualenv-clone==0.5.7
 WeasyPrint==59.0

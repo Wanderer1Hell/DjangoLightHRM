@@ -10,7 +10,7 @@ from django.contrib.auth.models import User
 class EmployeeCreateForm(forms.ModelForm):
     employeeid = forms.CharField(
         widget=forms.TextInput(
-            attrs={'placeholder': 'Пожалуйста, введите 5 символов без символов и косых черт, например, A0025'})
+            attrs={'placeholder': 'Пожалуйста, введите цифры без пробелов'})
     )
     image = forms.ImageField(
         widget=forms.FileInput(attrs={'onchange': 'previewImage(this);'})

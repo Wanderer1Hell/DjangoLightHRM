@@ -5,6 +5,7 @@ from employee.managers import EmployeeManager, LeaveManager
 from phonenumber_field.modelfields import PhoneNumberField
 from django.utils.translation import gettext as _
 from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 
 
 # Create your models here.
@@ -320,7 +321,7 @@ class Employee(models.Model):
     )
 
     # PERSONAL DATA
-    user = models.ForeignKey(User, on_delete=models.CASCADE, default=1)
+    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
     lastname = models.CharField(_('Фамилия'), max_length=125, null=False, blank=False)
     firstname = models.CharField(_('Имя'), max_length=125, null=False, blank=False)
     othername = models.CharField(_('Отчество'), max_length=125, null=True, blank=True)
