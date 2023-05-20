@@ -11,6 +11,7 @@ urlpatterns = [
     path('employee/create/', views.dashboard_employees_create, name='employeecreate'),
     path('employee/profile/<int:id>/', views.dashboard_employee_info, name='employeeinfo'),
     path('employee/profile/edit/<int:id>/', views.employee_edit_data, name='edit'),
+    path('employees/<int:employee_id>/delete/', views.dashboard_employee_delete, name='employeedelete'),
 
     # Emergency
     path('emergency/create/', views.dashboard_emergency_create, name='emergencycreate'),

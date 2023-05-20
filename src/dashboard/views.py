@@ -288,6 +288,25 @@ def dashboard_employee_info(request, id):
     return render(request, 'dashboard/employee_detail.html', dataset)
 
 
+from django.shortcuts import get_object_or_404
+
+
+def dashboard_employee_delete(request, employee_id):
+    if not (request.user.is_authenticated and request.user.is_superuser and request.user.is_staff):
+        return redirect('/')
+
+    # Получение объекта сотрудника по его идентификатору
+    employee = get_object_or_404(Employee, id=employee_id)
+
+    if request.method == 'POST':
+        # Удаление сотрудника из базы данных
+        employee.delete()
+        return redirect('dashboard:employees')
+
+    # Отображение страницы подтверждения удаления
+    return render(request, 'dashboard/employee_delete.html', {'employee': employee})
+
+
 # ------------------------- EMERGENCY --------------------------------
 
 
