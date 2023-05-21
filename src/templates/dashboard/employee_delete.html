@@ -12,39 +12,52 @@
 
 
 
+
   {% block stylesheet %}
+    .rounded-circle-image{
+    border-radius: 50% !important;
+    width:250px;
+    height:250px;
+  }
 
-   .sec{
-   border:1px solid yellow;
-   background:red;
-}
+  .form-wrapper{
+  background:#fff;
+  -webkit-box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 3px 1px -2px rgba(0,0,0,0.12), 0 1px 5px 0 rgba(0,0,0,0.2);
+  box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 3px 1px -2px rgba(0,0,0,0.12), 0 1px 5px 0 rgba(0,0,0,0.2);
 
-    .form-wrapper{
-    -webkit-box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 3px 1px -2px rgba(0,0,0,0.12), 0 1px 5px 0 rgba(0,0,0,0.2);
-    box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 3px 1px -2px rgba(0,0,0,0.12), 0 1px 5px 0 rgba(0,0,0,0.2);
-    padding: 2%;
-    background:#fff !important;
-    padding-bottom:5%;
-}
+  padding-top: 2rem;
+  padding-bottom: 2rem;
 
-    .btn-lg{
-    padding:8px 30px;
-    
 }
 
 
-    .main-panel > .content {
-    padding: 60px 15px;
-    min-height: calc(100% - 123px);
+.list-group {
+  margin-top: 10px;
+}
+
+span{
+  color: #6f6f6f;
+  font-weight: lighter;
+  font-size: 16px;
 }
 
 
-    #override-start{
-        background:none !important;
-        top: 35% !important;
-        right:13px;
-        color:#000;
-        font-size: 24px;
+.list-group-item {
+    position: relative;
+    display: block;
+    padding: 10px 15px;
+    margin-bottom: -1px;
+    background-color: #fff;
+    border: 1px solid transparent;
+    font-size:17px;
+}
+
+  #override-start{
+    background:none !important;
+    top: 35% !important;
+    right:13px;
+    color:#000;
+    font-size: 24px;
 
     }
 
@@ -60,23 +73,47 @@
         font-size:16px;
     }
 
-    .prev-holder .prev-avatar{
-    border-radius:50%;
-    width:250px;
-    height:250px;
+    .employee-name-title{
+    color: #3873b1;
+    font-weight: 600;
+    font-variant: petite-caps;
+    font-size: 3.1rem !important;
+  }
 
-    -webkit-box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 3px 1px -2px rgba(0,0,0,0.12), 0 1px 5prgba(0,0,0,0.2);
-    box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 3px 1px -2px rgba(0,0,0,0.12), 0 1px 5px 0 rgba(0,0,0,0.2);
+  span,.list-group-item > div{
+  font-variant: petite-caps;
 }
 
 
-  {% endblock %}
+.panel-default>.panel-heading {
+    color: #fff !important;
+    background-color: #2d88a9 !important;
+}
+
+.panel-title a:hover{
+  color:#e6e4e4;
+}
+
+.panel-title a:active{
+  color:#e6e4e4;
+}
+
+.panel-title a:focus{
+  color:#e6e4e4;
+}
+ {% endblock %}
+
 {% block content %}
-  <h1>Удалить сотрудника</h1>
-  <p>Вы уверены, что хотите удалить сотрудника "{{ employee.firstname }} {{ employee.lastname }}"?</p>
-  <form method="post">
-    {% csrf_token %}
-    <button type="submit" class="btn btn-danger">Удалить</button>
-    <a href="{% url 'dashboard:employees'%}" class="btn btn-secondary">Отмена</a>
-  </form>
+    <section class="content">
+        <section class="container-fluid">
+            <h3>Вы уверены, что хотите удалить сотрудника "{{ employee.firstname }} {{ employee.lastname }}"?</h3>
+            <form method="post">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger">Удалить</button>
+                <a href="{% url 'dashboard:employees'%}" class="btn btn-secondary">Отмена</a>
+            </form>
+        </section>
+    </section>
 {% endblock %}
+
+
