@@ -43,7 +43,7 @@ class EmployeeCreateForm(forms.ModelForm):
 
     class Meta:
         model = Employee
-        exclude = ['is_blocked', 'is_deleted', 'created', 'updated']
+        exclude = ['is_blocked', 'is_deleted', 'created', 'updated', 'is_terminated']
         widgets = {
             'bio': forms.Textarea(attrs={'cols': 5, 'rows': 5})
         }
@@ -114,4 +114,3 @@ class CompanyForm(forms.ModelForm):
     class Meta:
         model = Company
         fields = ['id', 'name', 'leader_lastname', 'leader_name', 'leader_namemiddle', 'position']
-

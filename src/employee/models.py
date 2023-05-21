@@ -362,7 +362,6 @@ class Employee(models.Model):
     lastwork = models.CharField(_('Последнее место работы'), max_length=125, null=True, blank=True)
     position = models.CharField(_('Занимаемая должность'), help_text='Занимаемая должность на последнем месте работы?',
                                 max_length=255, null=True, blank=True)
-
     # COMPANY DATA
     department = models.ForeignKey(Department, verbose_name=_('Департамент'), on_delete=models.SET_NULL, null=True,
                                    default=None)
@@ -377,6 +376,7 @@ class Employee(models.Model):
                              help_text='Загрузи изображения не более 2.0 Мб')  # work on path username-date/image
     bio = models.CharField(_('Заметки'), help_text='Дополнительная информация', max_length=255, default='', null=True,
                            blank=True)
+    is_terminated = models.BooleanField(default=False)
 
     # app related
     is_blocked = models.BooleanField(_('Is Blocked'), help_text='button to toggle employee block and unblock',
@@ -394,6 +394,7 @@ class Employee(models.Model):
         verbose_name = _('Employee')
         verbose_name_plural = _('Employees')
         ordering = ['-created']
+
 
     def __str__(self):
         return self.get_full_name
@@ -486,6 +487,9 @@ class Employee(models.Model):
         return
 
     def save(self, *args, **kwargs):
+
+
+
         '''
         overriding the save method - for every instance that calls the save method 
         perform this action on its employee_id

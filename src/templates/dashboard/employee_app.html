@@ -180,7 +180,7 @@
 	            				<a href="">
 	            				<span>Сотрудники</span>
 	            				</a>
-	            				<span class="count-object">{{ all_employees.count }}</span> 
+	            				<span class="count-object">{{ untermintaed_employees.count }}</span>
 	            			</div>
             			</section>
 	            		<section class="col-lg-4 col-md-4 col-sm-12">
@@ -193,10 +193,10 @@
 	            		</section>
 	            		<section class="col-lg-4 col-md-4 col-sm-12">
 	            			<div class="birthday-box sec-box">
-	            				<a href="">
-	            				<span>Заблокированные пользователи</span>
+	            				<a href="{% url 'accounts:terminated' %}">
+	            				<span>Уволенные сотрудники</span>
 	            				</a>
-	            				<span class="count-object">{{ blocked_employees.count }}</span> 
+	            				<span class="count-object">{{ terminated_employees.count }}</span>
 	            			</div>
 	            		</section>
 	            		<!-- <section class="col col-lg-4">
@@ -274,16 +274,21 @@
 							      <td>active</td>
 							      {% endif %}
 
-							      <td> 
+							      <td>
 							      	<a href="{% url 'dashboard:employeeinfo' employee.id %}">
 							      	    Подробнее
 							      	</a>
 
 							      </td>
                                 <td>
-							      	<a href="{% url 'dashboard:employeedelete' employee.id %}">Удалить</>
+							      	<a href="{% url 'dashboard:employeedelete' employee.id %}">Удалить</a>
 							      </td>
+
+                                <td>
+                                    <a href="{% url 'dashboard:employee_terminate' employee.id %}">Уволить</a>
+                                    </td>
 							    </tr>
+
 							    {% endfor %}
 
 							  </tbody>

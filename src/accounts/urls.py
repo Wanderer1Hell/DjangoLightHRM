@@ -16,8 +16,7 @@ urlpatterns = [
     path('users/all',views.users_list,name='users'),
     path('users/<int:id>/block',views.users_block,name='userblock'),
     path('users/<int:id>/unblock',views.users_unblock,name='userunblock'),
-    path('users/blocked/all',views.users_blocked_list,name='erasedusers'),
-
+    path('users/terminated/all',views.terminated_employee,name='terminated'),
 
 ]
 

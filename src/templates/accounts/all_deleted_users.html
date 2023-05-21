@@ -1,65 +1,64 @@
-
 {% extends '_layout.html' %}
-{% block title %} {{ title }} {% endblock %}
+{% block title %}{{ title }}{% endblock %}
 
+{% block navheader %}
+    {% include 'includes/navheader_employee_app.html' %}
+{% endblock %}
 
- {% block navheader %}
- 	{% include 'includes/navheader_employee_app.html' %}
- {% endblock %}
-        <!--CONTENTS-->
- {% block content %}
-        <section class="content">
+{% block content %}
+    <section class="content">
+        <section class="container-fluid">
+            <section class="row">
+                <section class="col col-lg-12 text-center">
+                    <h3 class="title-h3">Список уволенных сотрудников</h3>
+                </section>
+            </section>
+            <!-- TABLE -->
+            <table class="table table-striped">
+    <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Username</th>
+            <th scope="col">Сотрудник (полное имя)</th>
+            <th scope="col">Должность</th>
+            <th scope="col">Департамент</th>
+            <th scope="col">Статус</th>
+            <th scope="col">Действие</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for employee in employees %}
+        <tr>
+            <td>{{ employee.employeeid }}</td>
+            <td>{{ employee.user.username }}</td>
+            <td>{{ employee.get_full_name }}</td>
+            <td>{{ employee.role }}</td>
+            <td>{{ employee.department }}</td>
+            {% if employee.is_terminated %}
+            <td>Уволен</td>
+            {% else %}
+            <td>Активен</td>
+            {% endif %}
+            <td><a href="{% url 'dashboard:employee_unterminate' employee.id %}">Восстановить</a></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
 
-            <section class="container-fluid">
-            		<section class="row">
-            			<section class="col col-lg-12 text-center">
-            				<h3 class="title-h3">Список удаленных пользователей</h3>
-            			</section>
-            		</section>
-                	<!-- TABLE -->
-                		<table class="table table-striped">
-							  <thead>
-							    <tr>
-							      <th scope="col">Username</th>
-							      <th scope="col">Сотрудник (полное имя) </th>
-							      <th scope="col">Департамент</th>
-							      <td scope="col">Действие</td>
-							    </tr>
-							  </thead>
-
-							  <tbody>
-							  	{% for emp in employees %}
-							  	<tr>
-								      <td>{{emp.user.username}}</td>
-								      <td>{{ emp.get_full_name }}</td>
-								      <td>{{ emp.department }}</td>
-								      <td>unblock</td>
-							    </tr>
-							   {% endfor %}
-							  </tbody>
-						</table>
-                	<!-- /TABLE -->
-
-            </section> <!-- /container --> 
-
-
-        </section>
- {% endblock %}
+            <!-- /TABLE -->
+        </section> <!-- /container -->
+    </section>
+{% endblock %}
 
 <script type="text/javascript">
-{% block extrajs%}
-/*create-user-button - handler*/
+    {% block extrajs %}
+    /*create-user-button - handler*/
 
-// $(document).ready(function(){
-
-// var createuser = $('.create-user-model');
-// createuser.on('click',function(){
-// alert("who clicked me ?")
-
-// });
-
-
-// });
-
-{% endblock %}
+    // $(document).ready(function(){
+    // var createuser = $('.create-user-model');
+    // createuser.on('click',function(){
+    // alert("who clicked me ?")
+    // });
+    // });
+    {% endblock %}
 </script>

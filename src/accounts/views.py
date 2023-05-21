@@ -142,7 +142,7 @@ def users_block(request, id):
     return redirect('accounts:users')
 
 
-def users_blocked_list(request):
-    blocked_employees = Employee.objects.all_blocked_employees()
-    return render(request, 'accounts/all_deleted_users.html',
-                  {'employees': blocked_employees, 'title': 'blocked users list'})
+def terminated_employee(request):
+    terminated_employees = Employee.objects.filter(is_terminated=True)
+    return render(request, 'accounts/all_deleted_users.html', {'employees': terminated_employees, 'title': 'Уволенные сотрудники'})
+

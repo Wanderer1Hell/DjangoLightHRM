@@ -3,20 +3,14 @@ import os
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse, HttpResponseRedirect
-from django.contrib.auth.models import User
-from django.conf import settings
 from django.db.models import Q
-import datetime
-from django.core.mail import send_mail
 from django.contrib import messages
-from django.urls import reverse
 from employee.forms import EmployeeCreateForm, EmergencyCreateForm, FamilyCreateForm, BankAccountCreation, \
     DocumentCreateForm, CompanyForm
 from employee.models import *
 from employee.forms import LeaveCreationForm
+
 import locale
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth import get_user_model
 
 from employee.models import Employee
 
@@ -26,7 +20,7 @@ def dashboard(request):
     '''
 	Summary of all apps - display here with charts etc.
 	eg.lEAVE - PENDING|APPROVED|RECENT|REJECTED - TOTAL THIS MONTH or NEXT MONTH
-	EMPLOYEE - TOTAL | GENDER 
+	EMPLOYEE - TOTAL | GENDER
 	CHART - AVERAGE EMPLOYEE AGES
 	'''
     dataset = dict()
@@ -48,13 +42,17 @@ def dashboard(request):
     return render(request, 'dashboard/dashboard_index.html', dataset)
 
 
+from django.db.models import Q
+
+
 def dashboard_employees(request):
     if not (request.user.is_authenticated and request.user.is_superuser and request.user.is_staff):
         return redirect('/')
 
     dataset = dict()
     departments = Department.objects.all()
-    employees = Employee.objects.all()
+    employees = Employee.objects.filter(is_terminated=False)  # Фильтрация по активным сотрудникам
+    terminated_employees = Employee.objects.filter(is_terminated=True)  # Фильтрация по не активным сотрудникам
 
     # pagination
     query = request.GET.get('search')
@@ -72,7 +70,8 @@ def dashboard_employees(request):
     dataset['employee_list'] = employees_paginated
     dataset['departments'] = departments
     dataset['all_employees'] = Employee.objects.all_employees()
-
+    dataset['terminated_employees'] = terminated_employees
+    dataset['untermintaed_employees'] = employees
     blocked_employees = Employee.objects.all_blocked_employees()
 
     dataset['blocked_employees'] = blocked_employees
@@ -288,7 +287,32 @@ def dashboard_employee_info(request, id):
     return render(request, 'dashboard/employee_detail.html', dataset)
 
 
-from django.shortcuts import get_object_or_404
+def employee_terminate(request, id):
+    if not (request.user.is_authenticated and request.user.is_superuser and request.user.is_staff):
+        return redirect('/')
+
+    employee = get_object_or_404(Employee, id=id)
+    employee.is_terminated = True
+    employee.save()
+
+    messages.success(request, 'Сотрудник успешно уволен', extra_tags='alert alert-success alert-dismissible show')
+
+    # Редирект на страницу со всеми сотрудниками
+    return redirect('dashboard:employees')
+
+
+def employee_unterminate(request, id):
+    if not (request.user.is_authenticated and request.user.is_superuser and request.user.is_staff):
+        return redirect('/')
+
+    employee = get_object_or_404(Employee, id=id)
+    employee.is_terminated = False
+    employee.save()
+
+    messages.success(request, 'Сотрудник успешно восстановлен', extra_tags='alert alert-success alert-dismissible show')
+
+    # Редирект на страницу со всеми сотрудниками
+    return redirect('dashboard:employees')
 
 
 def dashboard_employee_delete(request, employee_id):

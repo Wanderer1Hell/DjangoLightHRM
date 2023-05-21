@@ -12,6 +12,8 @@ urlpatterns = [
     path('employee/profile/<int:id>/', views.dashboard_employee_info, name='employeeinfo'),
     path('employee/profile/edit/<int:id>/', views.employee_edit_data, name='edit'),
     path('employees/<int:employee_id>/delete/', views.dashboard_employee_delete, name='employeedelete'),
+    path('employee/terminate/<int:id>/', views.employee_terminate, name='employee_terminate'),
+    path('employees/restore/<int:id>/', views.employee_unterminate, name='employee_unterminate'),
 
     # Emergency
     path('emergency/create/', views.dashboard_emergency_create, name='emergencycreate'),

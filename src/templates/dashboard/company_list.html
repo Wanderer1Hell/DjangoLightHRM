@@ -62,45 +62,49 @@
 {% endblock %}
 
 {% block content %}
-    <section class="content">
-            <section class="container-fluid">
+<section class="content">
+    <section class="container-fluid margin-bottom">
+        <section class="form-wrapper">
+            <section class="row">
+                <section class="col col-lg-12 col-md-12 col-sm-12">
+                    <div class="text-center table-description">
+                        <h4 class="title-h3">Данные организации</h4>
+                    </div>
 
-                <section class="form-wrapper">
-                    <section class="row">
-                        <section class="col col-lg-12 col-md-12  col-sm-12">
-                       <h4>Данные организации</h4>
-  <table>
-    <thead>
-      <tr>
-        <th>Наименование</th>
-        <th>Фамилия руководителя</th>
-        <th>Имя руководителя</th>
-        <th>Отчество руководителя</th>
-        <th>Должность</th>
-
-      </tr>
-    </thead>
-    <tbody>
-      {% for company in companies %}
-        <tr>
-          <td>{{ company.name }}</td>
-          <td>{{ company.leader_lastname }}</td>
-          <td>{{ company.leader_name }}</td>
-          <td>{{ company.leader_namemiddle }}</td>
-          <td>{{ company.position }}</td>
-          <td>
-           <<a href="{% url 'dashboard:companyupdate' id=company.id %}">Редактировать</a>
-           <a href="{% url 'dashboard:companydelete' id=company.id %}">Удалить</a>
-          </td>
-
-          </td>
-        </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-  <a href="{% url 'dashboard:companyupdate' id=0 %}">Добавить данные</a>
-
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Наименование</th>
+                                <th scope="col">Фамилия руководителя</th>
+                                <th scope="col">Имя руководителя</th>
+                                <th scope="col">Отчество руководителя</th>
+                                <th scope="col">Должность</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for company in companies %}
+                            <tr>
+                                <td>{{ company.name }}</td>
+                                <td>{{ company.leader_lastname }}</td>
+                                <td>{{ company.leader_name }}</td>
+                                <td>{{ company.leader_namemiddle }}</td>
+                                <td>{{ company.position }}</td>
+                                <td>
+                                    <a href="{% url 'dashboard:companyupdate' id=company.id %}">Редактировать</a>
+                                    <a href="{% url 'dashboard:companydelete' id=company.id %}">Удалить</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    <a href="{% url 'dashboard:companyupdate' id=0 %}">Добавить данные</a>
+                </section>
+            </section>
+        </section>
+    </section>
+</section>
 {% endblock %}
+
 
 <script type="text/javascript">
     {% block extrajs %}
