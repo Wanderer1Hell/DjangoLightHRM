@@ -114,3 +114,12 @@ class CompanyForm(forms.ModelForm):
     class Meta:
         model = Company
         fields = ['id', 'name', 'leader_lastname', 'leader_name', 'leader_namemiddle', 'position']
+        widgets = {
+        'name': forms.TextInput(attrs={'class': 'myformcontrol'}),
+        'leader_lastname': forms.TextInput(attrs={'class': 'myformcontrol'}),
+        'leader_name': forms.TextInput(attrs={'class': 'myformcontrol'}),
+        'leader_namemiddle': forms.TextInput(attrs={'class': 'myformcontrol'}),
+        'position': forms.TextInput(attrs={'class': 'myformcontrol'}),
+        }
+
+
