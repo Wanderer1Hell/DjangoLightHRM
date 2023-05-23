@@ -30,6 +30,8 @@ urlpatterns = [
     path('document/create/', views.dashboard_document_create, name='documentcreate'),
     path('document/delete/<int:id>/', views.dashboard_document_delete, name='documentdelete'),
     path('document/update/<int:id>', views.dashboard_document_edit, name='documentedit'),
+    path('document/generate', views.fill_template, name='filltemplate'),
+    path('document/generate-t8', views.fill_template_t8, name='filltemplate_t8'),
 
     # ---work-on-edit-view------#
     path('leave/apply/', views.leave_creation, name='createleave'),

@@ -1,18 +1,26 @@
 import os
-
+from datetime import datetime
+from django.utils import timezone
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse, HttpResponseRedirect
 from django.db.models import Q
 from django.contrib import messages
+from docx.enum.style import WD_STYLE_TYPE
+from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
+from docx.shared import Pt
+
 from employee.forms import EmployeeCreateForm, EmergencyCreateForm, FamilyCreateForm, BankAccountCreation, \
     DocumentCreateForm, CompanyForm
+from docx import Document as Docxdoc
 from employee.models import *
 from employee.forms import LeaveCreationForm
-
+from django.contrib.auth.models import User
 import locale
 
 from employee.models import Employee
+from hrsuit import settings
+from hrsuit.settings import BASE_DIR
 
 
 # from leave.forms import CommentForm
@@ -705,7 +713,7 @@ def leave_creation(request):
 # 	dataset = dict()
 
 # 	form = LeaveCreationForm()
-# 	cform = CommentForm() 
+# 	cform = CommentForm()
 # 	dataset['form'] = form
 # 	dataset['cform'] = cform
 # 	return render(request,'dashboard/create_leave.html',dataset)
@@ -877,3 +885,181 @@ def company_delete(request, id):
         company.delete()
         return redirect('dashboard:companylist')
     return render(request, 'dashboard/company_delete.html', {'company': company})
+
+
+def fill_template_t8(request):
+    if request.method == 'POST' and 'generate-document-t8' in request.POST:
+
+        employee_id = request.POST.get('employee-t8')
+        employee = Employee.objects.get(id=employee_id)
+
+        role_id = employee.role_id
+        role = Role.objects.get(id=role_id)
+        role_title = role.name
+
+        departament_id = employee.department_id
+        departament = Department.objects.get(id=departament_id)
+        departament_title = departament.name
+
+        company = Company.objects.first()
+
+        condition = request.POST.get('condition-t8')
+
+        template_path = os.path.join(os.path.dirname(BASE_DIR), 'src', 'static_cdn', 'doctemplates', 't8.docx')
+
+        document_number = request.POST.get('document-number-t8')
+        date_compiled = request.POST.get('date-compiled-t8')
+        data = {
+            '{{name}}': employee.firstname,
+            '{{lastname}}': employee.lastname,
+            '{{othername}}': employee.othername,
+            '{{role}}': role_title,
+            '{{departament}}': departament_title,
+            '{{company}}': company.name,
+            '{{position_master}}': company.position,
+            '{{employeeid}}': employee.employeeid,
+            '{{document_number}}': document_number,
+            '{{date_compiled}}': date_compiled,
+            '{{condition}}': condition,
+        }
+
+        filled_doc = fill_template_document(template_path, data)
+
+        # Генерация пути к файлу документа
+        folder_path = os.path.join('documents', timezone.now().strftime('%Y/%m/%d'))
+        os.makedirs(os.path.join(settings.MEDIA_ROOT, folder_path), exist_ok=True)
+        file_name = 'prikaz_o_uvolnenii.docx'
+
+        # Проверка наличия файла с таким же именем
+        i = 1
+        while os.path.exists(os.path.join(settings.MEDIA_ROOT, folder_path, file_name)):
+            # Добавление уникального номера к имени файла
+            base_name, extension = os.path.splitext(file_name)
+            file_name = f'{base_name}_{i}{extension}'
+            i += 1
+
+        # Сохранение заполненного документа
+        file_path = os.path.join(folder_path, file_name)
+        filled_doc.save(os.path.join(settings.MEDIA_ROOT, file_path))
+
+        # Создание и сохранение объекта Document
+        document = Document.objects.create(
+            employee=employee,
+            document_file=file_path,
+            filename='Приказ о прекращении трудового договора с работником'
+        )
+
+        # Отправка заполненного документа в качестве ответа
+        response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
+        response['Content-Disposition'] = f'attachment; filename={file_name}'
+        filled_doc.save(response)
+
+        return response
+    # Если метод запроса не POST или кнопка "Сгенерировать документ" не была нажата,
+    # просто рендерим шаблон без выполнения генерации документа
+    employees = Employee.objects.all()
+    return render(request, 'fill_template.html', {'employees': employees})
+
+
+def fill_template(request):
+    if request.method == 'POST' and 'generate-document' in request.POST:
+        employee_id = request.POST.get('employee')
+        employee = Employee.objects.get(id=employee_id)
+
+        role_id = employee.role_id
+        role = Role.objects.get(id=role_id)
+        role_title = role.name
+
+        departament_id = employee.department_id
+        departament = Department.objects.get(id=departament_id)
+        departament_title = departament.name
+
+        bank = Bank.objects.get(employee_id=employee.id)  # Получение связанной банковской записи
+        salary = bank.salary
+        rubles = int(salary)
+        kopeks = int((salary - rubles) * 100)
+
+        company = Company.objects.first()
+
+        template_path = os.path.join(os.path.dirname(BASE_DIR), 'src', 'static_cdn', 'doctemplates', 't1.docx')
+
+        document_number = request.POST.get('document-number')
+        date_compiled = request.POST.get('date-compiled')
+        condition = request.POST.get('condition')
+        data = {
+            '{{name}}': employee.firstname,
+            '{{lastname}}': employee.lastname,
+            '{{othername}}': employee.othername,
+            '{{role}}': role_title,
+            '{{departament}}': departament_title,
+            '{{company}}': company.name,
+            '{{position_master}}': company.position,
+            '{{salary_rubles}}': rubles,
+            '{{salary_kopeks}}': kopeks,
+            '{{employeeid}}': employee.employeeid,
+            '{{document_number}}': document_number,
+            '{{date_compiled}}': date_compiled,
+            '{{condition}}': condition,
+        }
+
+        filled_doc = fill_template_document(template_path, data)
+
+        # Генерация пути к файлу документа
+        folder_path = os.path.join('documents', timezone.now().strftime('%Y/%m/%d'))
+        os.makedirs(os.path.join(settings.MEDIA_ROOT, folder_path), exist_ok=True)
+        file_name = 'prikaz_o_prieme_na_rabotu.docx'
+
+        # Проверка наличия файла с таким же именем
+        i = 1
+        while os.path.exists(os.path.join(settings.MEDIA_ROOT, folder_path, file_name)):
+            # Добавление уникального номера к имени файла
+            base_name, extension = os.path.splitext(file_name)
+            file_name = f'{base_name}_{i}{extension}'
+            i += 1
+
+        # Сохранение заполненного документа
+        file_path = os.path.join(folder_path, file_name)
+        filled_doc.save(os.path.join(settings.MEDIA_ROOT, file_path))
+
+        # Создание и сохранение объекта Document
+        document = Document.objects.create(
+            employee=employee,
+            document_file=file_path,
+            filename='Приказ о приёме на работу'
+        )
+
+        # Отправка заполненного документа в качестве ответа
+        response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
+        response['Content-Disposition'] = f'attachment; filename={file_name}'
+        filled_doc.save(response)
+
+        return response
+    # Если метод запроса не POST или кнопка "Сгенерировать документ" не была нажата,
+    # просто рендерим шаблон без выполнения генерации документа
+    employees = Employee.objects.all()
+    return render(request, 'fill_template.html', {'employees': employees})
+
+
+def fill_template_document(template_path, data):
+    doc = Docxdoc(template_path)
+
+    filled_style = doc.styles.add_style('FilledData', WD_STYLE_TYPE.PARAGRAPH)
+    filled_style.font.name = 'Times New Roman'
+    filled_style.font.size = Pt(10)
+    filled_style.paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+
+    for paragraph in doc.paragraphs:
+        for key, value in data.items():
+            if key in paragraph.text:
+                paragraph.text = paragraph.text.replace(key, value)
+                paragraph.style = filled_style
+
+    for table in doc.tables:
+        for row in table.rows:
+            for cell in row.cells:
+                for key, value in data.items():
+                    if key in cell.text:
+                        cell.text = cell.text.replace(key, str(value))
+                        cell.paragraphs[0].style = filled_style
+
+    return doc

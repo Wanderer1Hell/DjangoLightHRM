@@ -1,0 +1,66 @@
+{% extends '_layout.html' %}
+
+{% block title %} {{ title }} {% endblock %}
+
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block navheader %}
+    {% include 'includes/navheader_employee_app.html' %}
+{% endblock %}
+
+{% block stylesheet %}
+    .sec {
+        border: 1px solid yellow;
+        background: red;
+    }
+
+    .form-wrapper {
+        -webkit-box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 3px 1px -2px rgba(0,0,0,0.12), 0 1px 5px 0 rgba(0,0,0,0.2);
+        box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 3px 1px -2px rgba(0,0,0,0.12), 0 1px 5px 0 rgba(0,0,0,0.2);
+        padding: 2%;
+        background: #fff !important;
+        padding-bottom: 5%;
+    }
+
+    .btn-lg {
+        padding: 8px 30px;
+    }
+
+    .main-panel > .content {
+        padding: 60px 15px;
+        min-height: calc(100% - 123px);
+    }
+
+    #override-start {
+        background: none !important;
+        top: 35% !important;
+        right: 13px;
+        color: #000;
+        font-size: 24px;
+    }
+
+    .alert-warning {
+        background: #fd7b7b;
+    }
+
+    .alert-success {
+        background-color: #82b72a;
+    }
+
+    .alert-success, .alert-warning {
+        font-size: 16px;
+    }
+
+    .prev-holder .prev-avatar {
+        border-radius: 50%;
+        width: 250px;
+        height: 250px;
+        -webkit-box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 3px 1px -2px rgba(0,0,0,0.12), 0 1px 5px 0 rgba(0,0,0,0.2);
+        box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 3px 1px -2px rgba(0,0,0,0.12), 0 1px 5px 0 rgba(0,0,0,0.2);
+    }
+{% endblock %}
+{% block content %}
+<h1>Документ сгенерирован и сохранен</h1>
+<a href="{% static output %}" download>Скачать документ</a>
+{% endblock %}
