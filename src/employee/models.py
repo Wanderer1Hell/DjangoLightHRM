@@ -111,7 +111,6 @@ class Bank(models.Model):
         return str(self.name)
 
 
-
 class Emergency(models.Model):
     FATHER = 'Отец'
     MOTHER = 'Мать'
@@ -416,9 +415,9 @@ class Employee(models.Model):
         othername = self.othername
 
         if (firstname and lastname) or othername is None:
-            fullname = firstname + ' ' + lastname
+            fullname = lastname + ' ' + firstname
             if othername:
-                fullname = firstname + ' ' + lastname + ' ' + othername
+                fullname = lastname + ' ' + firstname + ' ' + othername
             return fullname
         return
 
