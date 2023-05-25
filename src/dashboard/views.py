@@ -1,5 +1,6 @@
 import os
-from datetime import datetime
+import calendar as cal
+from datetime import datetime, timedelta, date
 from django.utils import timezone
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.shortcuts import render, redirect, get_object_or_404
@@ -11,7 +12,7 @@ from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
 from docx.shared import Pt
 
 from employee.forms import EmployeeCreateForm, EmergencyCreateForm, FamilyCreateForm, BankAccountCreation, \
-    DocumentCreateForm, CompanyForm
+    DocumentCreateForm, CompanyForm, MilitaryCreateForm
 from docx import Document as Docxdoc
 from employee.models import *
 from employee.forms import LeaveCreationForm
@@ -282,6 +283,7 @@ def dashboard_employee_info(request, id):
     employee = get_object_or_404(Employee, id=id)
     employee_emergency_instance = Emergency.objects.filter(employee=employee).first()
     employee_family_instance = Relationship.objects.filter(employee=employee).first()
+    employee_military_instance = MilitaryRecord.objects.filter(employee=employee).first()
     bank_instance = Bank.objects.filter(employee=employee).first()
     documents = Document.objects.filter(employee=employee)
 
@@ -291,6 +293,7 @@ def dashboard_employee_info(request, id):
     dataset['family'] = employee_family_instance
     dataset['bank'] = bank_instance
     dataset['documents'] = documents
+    dataset['military'] = employee_military_instance
     dataset['title'] = 'profile - {0}'.format(employee.get_full_name)
     return render(request, 'dashboard/employee_detail.html', dataset)
 
@@ -412,8 +415,79 @@ def dashboard_emergency_update(request, id):
     form = EmergencyCreateForm(request.POST or None, instance=emergency)
     dataset['form'] = form
     dataset['title'] = 'Обновление экстренной информации для {0}'.format(employee.get_full_name)
+
     return render(request, 'dashboard/emergency_create.html', dataset)
 
+
+# ----------------------------- MILITARY -------------------------------#
+def dashboard_military_create(request):
+    if not (request.user.is_authenticated and request.user.is_superuser and request.user.is_staff):
+        return redirect('/')
+
+    emp_name = ''  # Объявление и присвоение значения по умолчанию
+
+    if request.method == 'POST':
+        form = MilitaryCreateForm(data=request.POST)
+        if form.is_valid():
+            instance = form.save(commit=False)
+            employee_id = request.POST.get('employee')
+            employee_object = Employee.objects.get(id=employee_id)
+            emp_name = employee_object.get_full_name
+            instance.employee = employee_object
+            instance.fullname = request.POST.get('fullname')
+            instance.save()
+            messages.success(request, 'Информация о ВУ успешно сохранена для {0}'.format(emp_name),
+                             extra_tags='alert alert-success alert-dismissible show')
+            return redirect('dashboard:militarycreate')
+        else:
+            messages.error(request, 'Ошибка при сохранении информации о ВУ для {0}'.format(emp_name),
+                           extra_tags='alert alert-warning alert-dismissible show')
+            return redirect('dashboard:militaryupdate')
+
+    dataset = dict()
+    form = MilitaryCreateForm()
+    dataset['form'] = form
+    dataset['title'] = 'Добавить документы ВУ'
+    return render(request, 'dashboard/military_create.html', dataset)
+
+
+def dashboard_military_update(request, id):
+    if not (request.user.is_authenticated and request.user.is_superuser):
+        return redirect('/')
+
+    military = get_object_or_404(MilitaryRecord, id=id)
+    employee = military.employee
+    if request.method == 'POST':
+        form = MilitaryCreateForm(data=request.POST, instance=military)
+        if form.is_valid():
+            instance = form.save(commit=False)
+            instance.employee = employee
+            instance.fullname = request.POST.get('fullname')
+
+            # now = datetime.datetime.now()
+            # instance.created = now
+            # instance.updated = now
+
+            instance.save()
+
+            messages.success(request, 'Информация о ВУ успешно обновлена',
+                             extra_tags='alert alert-success alert-dismissible show')
+            '''
+				NB: redirect() will try to use its given arguments to reverse a URL. 
+				This example assumes your URL patterns contain a pattern like this 
+				redirect(assumed_url_name,its_assuemed_whatever_instance id)
+			'''
+            return redirect('dashboard:employeeinfo',
+                            id=employee.id)  # worked on redirect to profile and message success and error
+
+    dataset = dict()
+    form = MilitaryCreateForm(request.POST or None, instance=military)
+    dataset['form'] = form
+    dataset['title'] = 'Обновление информации о ВУ для {0}'.format(employee.get_full_name)
+    return render(request, 'dashboard/military_create.html', dataset)
+
+
+# ----------------------------- MILITARY -------------------------------#
 
 # ----------------------------- FAMILY ---------------------------------#
 
@@ -510,37 +584,27 @@ def dashboard_family_edit(request, id):
 def dashboard_bank_create(request):
     if not (request.user.is_authenticated and request.user.is_superuser and request.user.is_staff):
         return redirect('/')
+
     if request.method == 'POST':
         form = BankAccountCreation(data=request.POST)
+
         if form.is_valid():
             instance = form.save(commit=False)
             employee_id = request.POST.get('employee')
             employee_object = get_object_or_404(Employee, id=employee_id)
-
             instance.employee = employee_object
-            instance.name = request.POST.get('name')
-            instance.branch = request.POST.get('branch')
-            instance.account = request.POST.get('account')
-            instance.salary = request.POST.get('salary')
-
-            # now = datetime.datetime.now()
-            # instance.created = now
-            # instance.updated = now
-
             instance.save()
 
             messages.success(request, 'Данные успешно созданы для {0}'.format(employee_object.get_full_name),
                              extra_tags='alert alert-success alert-dismissible show')
             return redirect('dashboard:bankaccountcreate')
         else:
-            messages.error(request, 'Ошибка при создании данных для {0}'.format(employee_object.get_full_name),
+            messages.error(request, 'Ошибка при создании данных',
                            extra_tags='alert alert-warning alert-dismissible show')
             return redirect('dashboard:bankaccountcreate')
 
     dataset = dict()
-
     form = BankAccountCreation()
-
     dataset['form'] = form
     dataset['title'] = 'Банковские данные'
     return render(request, 'dashboard/bank_account_create_form.html', dataset)
@@ -549,44 +613,32 @@ def dashboard_bank_create(request):
 def employee_bank_account_update(request, id):
     if not (request.user.is_superuser and request.user.is_authenticated):
         return redirect('/')
+
     bank_instance_obj = get_object_or_404(Bank, id=id)
     employee = bank_instance_obj.employee
 
     if request.method == 'POST':
         form = BankAccountCreation(request.POST, instance=bank_instance_obj)
+
         if form.is_valid():
             instance = form.save(commit=False)
             instance.employee = employee
-
-            instance.name = request.POST.get('name')
-            instance.branch = request.POST.get('branch')
-            instance.account = request.POST.get('account')
-            instance.salary = request.POST.get('salary')
-
-            # now = datetime.datetime.now()
-            # instance.created = now
-            # instance.updated = now
-
             instance.save()
 
-            messages.success(request, 'Данные успешно отредактированы для{0}'.format(employee.get_full_name),
+            messages.success(request, 'Данные успешно отредактированы для {0}'.format(employee.get_full_name),
                              extra_tags='alert alert-success alert-dismissible show')
             return redirect('dashboard:bankaccountcreate')
         else:
-            messages.error(request, 'Ошибка обновления данных для {0}'.format(employee.get_full_name),
+            messages.error(request, 'Ошибка обновления данных',
                            extra_tags='alert alert-warning alert-dismissible show')
             return redirect('dashboard:bankaccountcreate')
 
     dataset = dict()
-
-    form = BankAccountCreation(request.POST or None, instance=bank_instance_obj)
-
+    form = BankAccountCreation(instance=bank_instance_obj)
     dataset['form'] = form
     dataset['title'] = 'Данные об условиях труда (заработная плата)'
     return render(request, 'dashboard/bank_account_create_form.html', dataset)
 
-
-from django.contrib.auth.decorators import login_required
 
 
 def dashboard_document_create(request):
@@ -1063,3 +1115,65 @@ def fill_template_document(template_path, data):
                         cell.paragraphs[0].style = filled_style
 
     return doc
+
+def employee_info_schedule(request):
+    if not (request.user.is_authenticated and request.user.is_superuser and request.user.is_staff):
+        return redirect('/')
+
+    dataset = dict()
+    departments = Department.objects.all()
+    employees = Employee.objects.filter(is_terminated=False)  # Фильтрация по активным сотрудникам
+    terminated_employees = Employee.objects.filter(is_terminated=True)  # Фильтрация по не активным сотрудникам
+
+    # pagination
+    query = request.GET.get('search')
+    if query:
+        employees = employees.filter(
+            Q(firstname__icontains=query) |
+            Q(lastname__icontains=query)
+        )
+
+    paginator = Paginator(employees, 10)  # show 10 employee lists per page
+
+    page = request.GET.get('page')
+    employees_paginated = paginator.get_page(page)
+
+    dataset['employee_list'] = employees_paginated
+    dataset['departments'] = departments
+    dataset['all_employees'] = Employee.objects.all_employees()
+    dataset['terminated_employees'] = terminated_employees
+    dataset['untermintaed_employees'] = employees
+    blocked_employees = Employee.objects.all_blocked_employees()
+
+    dataset['blocked_employees'] = blocked_employees
+    dataset['title'] = 'Employees list view'
+    return render(request, 'dashboard/employee_info_schedule.html', dataset)
+
+def work_schedule(request, employee_id):
+    employee = Employee.objects.get(id=employee_id)
+    bank_records = Bank.objects.filter(employee=employee)
+
+    work_schedule = []
+    for record in bank_records:
+        if record.work_schedule:
+            work_schedule.extend(record.work_schedule)
+
+    today = date.today()
+    num_days = cal.monthrange(today.year, today.month)[1]  # Количество дней в текущем месяце
+
+    schedule = []
+    for i in range(num_days):
+        status = '8'  # По умолчанию статус '8'
+        if i % 7 in (5, 6):  # Если день недели - суббота или воскресенье, статус '0'
+            status = '0'
+        schedule.append(status)
+
+    context = {
+        'employee': employee,
+        'today': today,
+        'num_days': num_days,
+        'schedule': schedule,
+    }
+
+    return render(request, 'dashboard/work_schedule.html', context)
+

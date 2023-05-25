@@ -33,6 +33,14 @@ urlpatterns = [
     path('document/generate', views.fill_template, name='filltemplate'),
     path('document/generate-t8', views.fill_template_t8, name='filltemplate_t8'),
 
+    # Military
+    path('military/create/', views.dashboard_military_create, name='militarycreate'),
+    path('military/update/<int:id>', views.dashboard_military_update, name='militaryupdate'),
+
+    #Shedules
+    path('employee_info_schedule/', views.employee_info_schedule, name='employee_info_schedule'),
+    path('work_schedule/<int:employee_id>/', views.work_schedule, name='work_schedule'),
+
     # ---work-on-edit-view------#
     path('leave/apply/', views.leave_creation, name='createleave'),
     path('leaves/pending/all/', views.leaves_list, name='leaveslist'),

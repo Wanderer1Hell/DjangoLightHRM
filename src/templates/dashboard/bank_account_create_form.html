@@ -67,53 +67,63 @@
 
   
 
- {% block content %}
-        <section class="content">
-            <section class="container-fluid">
-           
-                <section class="form-wrapper">
-                    <section class="row">
-                        <section class="col col-lg-12 col-md-12  col-sm-12">
+{% block content %}
+<section class="content">
+    <section class="container-fluid">
 
-                            {% if  messages %}
-                                    {% for message in messages %}
-                                     <div {% if message.tags %} class="{{ message.tags}}"{% endif %}>
-                                         {{ message }}
-                                         <button type="button" class="close" id = "override-start"data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span>
-                                         </button>
-                                     </div>
-                                    {% endfor %}
-                            {% endif %}
+        <section class="form-wrapper">
+            <section class="row">
+                <section class="col col-lg-12 col-md-12 col-sm-12">
 
-                        </section>
-                    </section>
-
-                    <section class="row">
-                        <section class="col-lg-12 col-md-12 col-sm-12 text-center space-margin">
-                            <h3 class="title-h3">{{ title}}</h3>
-                        </section>
-                    </section>
-
-                    <section class="row">
-                        <section class="col-lg-12 col-md-12 col-sm-12">
-                            <form action="" method="POST" enctype="multipart/form-data">
-                                {% csrf_token %}
-                                {{form | crispy }}
-                                <button type="submit" class="btn btn-primary btn-lg btn-block">Сохранить</button>
-                            </form>
-                        </section>
-
-                    </section>
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div {% if message.tags %} class="{{ message.tags }}"{% endif %}>
+                                {{ message }}
+                                <button type="button" class="close" id="override-start" data-dismiss="alert"
+                                    aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
 
                 </section>
+            </section>
 
-            </section> <!-- /container --> 
+            <section class="row">
+                <section class="col-lg-12 col-md-12 col-sm-12 text-center space-margin">
+                    <h3 class="title-h3">{{ title }}</h3>
+                </section>
+            </section>
+
+            <section class="row">
+                <section class="col-lg-12 col-md-12 col-sm-12">
+                    <form action="" method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        {{ form | crispy }}
+                        {% if form.work_schedule.errors %}
+                            <div class="alert alert-danger">
+                                {{ form.work_schedule.errors }}
+                            </div>
+                        {% endif %}
+                        {% if form.schedule.errors %}
+                            <div class="alert alert-danger">
+                                {{ form.schedule.errors }}
+                            </div>
+                        {% endif %}
+                        <button type="submit" class="btn btn-primary btn-lg btn-block">Сохранить</button>
+                    </form>
+                </section>
+
+            </section>
+
         </section>
- {% endblock %}
+
+    </section> <!-- /container -->
+</section>
+{% endblock %}
 
 <script type="text/javascript">
-{% block extrajs%}
+    {% block extrajs %}
 
 
-{% endblock %}
+    {% endblock %}
 </script>

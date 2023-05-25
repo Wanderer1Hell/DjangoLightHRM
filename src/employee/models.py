@@ -1,4 +1,6 @@
 import datetime
+from calendar import calendar
+
 from employee.utility import code_format
 from django.db import models
 from employee.managers import EmployeeManager, LeaveManager
@@ -80,7 +82,13 @@ class Religion(models.Model):
 
 
 class Bank(models.Model):
-    # access table: employee.bank_set.
+    WORK_SCHEDULE_CHOICES = [
+        (1, '8 часов в день (40 в неделю)'),
+        (2, '2,5 часа в день (четыре раза в неделю)'),
+        (3, '8-часов в день, 8-часов в ночь (40 часов в неделю)'),
+        (4, '8-часов в день с выходными'),
+    ]
+
     employee = models.ForeignKey('employee', help_text='Выберите сотрудника(ов) для добавления банковского счета',
                                  on_delete=models.CASCADE, null=True, blank=False, verbose_name='Сотрудник')
     name = models.CharField(_('Наименование банка'), max_length=125, blank=False, null=True, help_text='')
@@ -89,6 +97,7 @@ class Bank(models.Model):
     branch = models.CharField(_('Филиал'), help_text='В каком отделении был открыт счет', max_length=125, blank=True,
                               null=True)
     salary = models.DecimalField(_('Оклад'), max_digits=16, decimal_places=2, null=True, blank=False)
+    work_schedule = models.IntegerField(_('График работы'), choices=WORK_SCHEDULE_CHOICES, null=True, blank=True)
 
     created = models.DateTimeField(verbose_name=_('Создано'), auto_now_add=True, null=True)
     updated = models.DateTimeField(verbose_name=_('Обновлено'), auto_now=True, null=True)
@@ -99,7 +108,8 @@ class Bank(models.Model):
         ordering = ['-name', '-account']
 
     def __str__(self):
-        return ('{0}'.format(self.name))
+        return str(self.name)
+
 
 
 class Emergency(models.Model):
@@ -395,7 +405,6 @@ class Employee(models.Model):
         verbose_name_plural = _('Employees')
         ordering = ['-created']
 
-
     def __str__(self):
         return self.get_full_name
 
@@ -487,8 +496,6 @@ class Employee(models.Model):
         return
 
     def save(self, *args, **kwargs):
-
-
 
         '''
         overriding the save method - for every instance that calls the save method 
@@ -642,3 +649,50 @@ class Company(models.Model):
     class Meta:
         verbose_name = 'Компания'
         verbose_name_plural = 'Компании'
+
+
+class MilitaryRecord(models.Model):
+    CATEGORIES = [
+        ('военнообязанный', 'Военнообязанный'),
+        ('запас', 'Запас'),
+        ('не годный к службе', 'Не годный к службе'),
+        ('подлежит призыву на ВС', 'Подлежит призыву на ВС'),
+    ]
+    RANKS = [
+        ('рядовой', 'Рядовой'),
+        ('ефрейтор', 'Ефрейтор'),
+        ('младший сержант', 'Младший сержант'),
+        ('сержант', 'Сержант'),
+        ('старший сержант', 'Старший сержант'),
+
+    ]
+    CATEGORIES_RESERVE = [
+        ('', ''),
+        ('подлежит призыву на ВС', 'Подлежит призыву на ВС'),
+
+    ]
+    COMPOSITION = [
+        ('офицеры', 'Офицеры'),
+        ('прапорщики и мичманы', 'Прапорщики и мичманы'),
+        ('сержанты и старшины', 'Сержанты и старшины'),
+        ('солдаты и матросы', 'Солдаты и матросы'),
+
+    ]
+
+    employee = models.ForeignKey('employee', on_delete=models.CASCADE, verbose_name='Сотрудник')
+    is_military_service = models.BooleanField(default=False, verbose_name='Военнообязанный')
+    category = models.CharField(choices=CATEGORIES, max_length=50, verbose_name='Категория военного учета')
+    military_ticket_number = models.CharField(max_length=50, verbose_name='Номер военного билета')
+    issue_date = models.DateField(verbose_name='Дата выдачи')
+    reserve_category = models.CharField(choices=CATEGORIES_RESERVE, max_length=50,
+                                        verbose_name='Категория запаса')
+    military_rank = models.CharField(choices=RANKS, max_length=50, verbose_name='Военное звание')
+    composition = models.CharField(choices=COMPOSITION, max_length=50, verbose_name='Состав')
+    code = models.CharField(max_length=150, verbose_name='Полное кодовое обозначение ВУС')
+    vk_name = models.CharField(max_length=50, verbose_name='Наименование ВК')
+    demobilization_mark = models.CharField(max_length=150, verbose_name='Отметка о снятии с ВУ')
+    booking = models.BooleanField(default=False, verbose_name='Бронирование')
+    mobilization_certificate = models.CharField(max_length=150, verbose_name='Мобилизационный талон')
+
+    created = models.DateTimeField(verbose_name=_('Создано'), auto_now_add=True, null=True)
+    updated = models.DateTimeField(verbose_name=_('Обновлено'), auto_now=True, null=True)

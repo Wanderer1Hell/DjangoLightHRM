@@ -2,7 +2,7 @@ from datetime import datetime
 
 from django import forms
 from employee.models import Role, Department, Nationality, Religion, Bank, Emergency, Relationship, Employee, Document, \
-    Leave, Company
+    Leave, Company, MilitaryRecord
 from django.contrib.auth.models import User
 
 
@@ -63,6 +63,14 @@ class EmergencyCreateForm(forms.ModelForm):
         fields = ['employee', 'fullname', 'tel', 'location', 'relationship']
 
 
+class MilitaryCreateForm(forms.ModelForm):
+    class Meta:
+        model = MilitaryRecord
+        fields = ['employee', 'is_military_service', 'category', 'military_ticket_number',
+                  'issue_date', 'reserve_category', 'military_rank', 'composition', 'code', 'vk_name',
+                  'demobilization_mark', 'booking', 'mobilization_certificate']
+
+
 # FAMILY
 
 class FamilyCreateForm(forms.ModelForm):
@@ -74,7 +82,9 @@ class FamilyCreateForm(forms.ModelForm):
 class BankAccountCreation(forms.ModelForm):
     class Meta:
         model = Bank
-        fields = ['employee', 'name', 'branch', 'account', 'salary']
+        fields = ['employee', 'name', 'branch', 'account', 'salary', 'work_schedule']
+
+
 
 
 class LeaveCreationForm(forms.ModelForm):
@@ -115,11 +125,9 @@ class CompanyForm(forms.ModelForm):
         model = Company
         fields = ['id', 'name', 'leader_lastname', 'leader_name', 'leader_namemiddle', 'position']
         widgets = {
-        'name': forms.TextInput(attrs={'class': 'myformcontrol'}),
-        'leader_lastname': forms.TextInput(attrs={'class': 'myformcontrol'}),
-        'leader_name': forms.TextInput(attrs={'class': 'myformcontrol'}),
-        'leader_namemiddle': forms.TextInput(attrs={'class': 'myformcontrol'}),
-        'position': forms.TextInput(attrs={'class': 'myformcontrol'}),
+            'name': forms.TextInput(attrs={'class': 'myformcontrol'}),
+            'leader_lastname': forms.TextInput(attrs={'class': 'myformcontrol'}),
+            'leader_name': forms.TextInput(attrs={'class': 'myformcontrol'}),
+            'leader_namemiddle': forms.TextInput(attrs={'class': 'myformcontrol'}),
+            'position': forms.TextInput(attrs={'class': 'myformcontrol'}),
         }
-
-

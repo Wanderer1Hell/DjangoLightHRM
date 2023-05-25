@@ -1,0 +1,50 @@
+{% extends '_layout.html' %}
+
+{% block title %} {{ title }} {% endblock %}
+
+{% load custom_filters %}
+
+{% block navheader %}
+    {% include 'includes/navheader_employee_app.html' %}
+{% endblock %}
+
+
+
+{% block content %}
+    <section class="content">
+        <section class="container-fluid margin-bottom">
+            <section class="form-wrapper">
+                <section class="row">
+                    <section class="col col-lg-12 col-md-12 col-sm-12">
+                        <div class="text-center table-description">
+                            <h4 class="title-h3">График работы сотрудника: {{ employee.get_full_name }}</h4>
+                        </div>
+
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Должность</th>
+                                    <th scope="col">Год</th>
+                                    <th scope="col">Месяц</th>
+                                    {% for day in today|num_days_in_month_filter %}
+                                        <th scope="col">{{ day }}</th>
+                                    {% endfor %}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>{{ employee.role }}</td>
+                                    <td>{{ today.year }}</td>
+                                    <td>{{ today.month }}</td>
+                                    {% for status in schedule %}
+                                        <td>{{ status }}</td>
+                                    {% endfor %}
+                                </tr>
+                            </tbody>
+                        </table>
+                    </section>
+                </section>
+            </section>
+        </section>
+    </section>
+{% endblock %}
