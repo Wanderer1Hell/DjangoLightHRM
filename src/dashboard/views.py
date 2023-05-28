@@ -1176,6 +1176,14 @@ def work_schedule(request, employee_id):
     bank_records = Bank.objects.filter(employee=employee)
 
     work_schedule = []
+
+    status_colors = {
+        'П': '#FFD700',  # Золотистый цвет для статуса 'П'
+        '0': '#FFB6C1',  # Розовый цвет для статуса '0'
+        '8': '#90EE90',  # Светло-зеленый цвет для статуса '8'
+        '2.5': '#90EE90',  # Светло-зеленый цвет для статуса '2.5'
+    }
+
     for record in bank_records:
         if record.work_schedule:
             work_schedule.append(record.work_schedule)
@@ -1183,7 +1191,7 @@ def work_schedule(request, employee_id):
     today = date.today()
     num_days = cal.monthrange(today.year, today.month)[1]  # Количество дней в текущем месяце
 
-    schedule = []  # Вставьте эту строку перед циклом if
+    schedule = []
 
     if bank_records and bank_records[0].work_schedule == 1:
         for i in range(num_days):
@@ -1192,7 +1200,11 @@ def work_schedule(request, employee_id):
                 status = '0'
             elif Holiday.objects.filter(date=date(today.year, today.month, i + 1)).exists():
                 status = 'П'
-            schedule.append(status)
+            if status in status_colors:
+                status_color = status_colors[status]
+            else:
+                status_color = '#FFFFFF'  # Белый цвет для других статусов
+            schedule.append({'status': status, 'color': status_color})
     elif bank_records and bank_records[0].work_schedule == 2:
         weekdays = [0, 1, 2, 3]
         for i in range(num_days):
@@ -1205,7 +1217,11 @@ def work_schedule(request, employee_id):
                     status = '2.5'
             else:
                 status = '0'
-            schedule.append(status)
+            if status in status_colors:
+                status_color = status_colors[status]
+            else:
+                status_color = '#FFFFFF'  # Белый цвет для других статусов
+            schedule.append({'status': status, 'color': status_color})
     elif bank_records and bank_records[0].work_schedule == 3:
         for i in range(num_days):
             if i % 4 < 2:
@@ -1215,9 +1231,13 @@ def work_schedule(request, employee_id):
                     status = '8'
             else:
                 status = '0'
-            schedule.append(status)
+            if status in status_colors:
+                status_color = status_colors[status]
+            else:
+                status_color = '#FFFFFF'  # Белый цвет для других статусов
+            schedule.append({'status': status, 'color': status_color})
     else:
-        schedule = ['none'] * num_days
+        schedule = [{'status': 'none', 'color': '#FFFFFF'}] * num_days
 
     context = {
         'employee': employee,
@@ -1227,3 +1247,4 @@ def work_schedule(request, employee_id):
     }
 
     return render(request, 'dashboard/work_schedule.html', context)
+

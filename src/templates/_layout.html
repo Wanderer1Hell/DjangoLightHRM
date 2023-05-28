@@ -13,7 +13,6 @@
 
 	<meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
     <meta name="viewport" content="width=device-width" />
-    <meta name="author" content="Mike Edward <Fullstack Developer/>,mail - edward.mike.anaryo@gmail.com">
 
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css?family=Anton|Russo+One" rel="stylesheet">
@@ -142,26 +141,26 @@
 
                 <li>
                     {% if request.user.is_superuser %}<a href="{% url 'dashboard:leaveslist' %}">{% else %}<a href="{% url 'dashboard:staffleavetable' %}"> {% endif %}
-                        <i class="pe-7s-news-paper"></i>
+                        <i class="pe-7s-plane"></i>
                         <p>Отпуска</p>
                     </a>
                 </li>
 
                 <li>
                     <a href="{% url 'dashboard:filltemplate' %}">
-                        <i class=""></i>
+                        <i class="pe-7s-note2"></i>
                         <p>Документы</p>
                     </a>
                 </li>
                  <li>
                     <a href="{% url 'dashboard:employee_info_schedule' %}">
-                        <i class=""></i>
+                        <i class="pe-7s-date"></i>
                         <p>Расписание</p>
                     </a>
                 </li>
             <li>
                     <a href="{% url 'dashboard:holiday_request' %}">
-                        <i class=""></i>
+                        <i class="pe-7s-gift"></i>
                         <p>Праздники</p>
                     </a>
                 </li>

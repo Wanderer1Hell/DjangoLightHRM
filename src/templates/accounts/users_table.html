@@ -57,7 +57,7 @@
                 	<!-- TABLE -->
                 	<div class="table-shadow">
                 		<div class="text-center table-description">
-                			<h4 class="title-h3">Пользователи приложения</h4>
+                			<h4 class="title-h3">История добавления</h4>
                 		</div>
                 		<div class="container-fluid">
                 			<div class="row">
@@ -70,7 +70,6 @@
 							      <th scope="col">Имя пользователя</th>
 							      <th scope="col">Сотрудник (ФИО) </th>
 							      <th scope="col">Департамент</th>
-							      <th scope="col">Статус</th>
 							      <th scope="col">Действия</th>
 							    </tr>
 							  </thead>
@@ -81,11 +80,6 @@
 								      <td>{{emp.user.username}}</td>
 								      <td>{{ emp.get_full_name }}</td>
 								      <td>{{ emp.department }}</td>
-								      {% if emp.user.is_active %}
-								      <td>active</td>
-								      {% else %}
-								      <td>inactive</td>
-								      {% endif %}
 
 								      {%  if emp.user.is_active and emp.user.is_superuser %}
 								      <!-- Admin cannot block self -->

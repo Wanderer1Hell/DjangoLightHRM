@@ -8,8 +8,6 @@
     {% include 'includes/navheader_employee_app.html' %}
 {% endblock %}
 
-
-
 {% block content %}
     <section class="content">
         <section class="container-fluid margin-bottom">
@@ -36,8 +34,8 @@
                                     <td>{{ employee.role }}</td>
                                     <td>{{ today.year }}</td>
                                     <td>{{ today.month }}</td>
-                                    {% for status in schedule %}
-                                        <td>{{ status }}</td>
+                                    {% for day_schedule in schedule %}
+                                        <td style="background-color: {{ day_schedule.color }}">{{ day_schedule.status }}</td>
                                     {% endfor %}
                                 </tr>
                             </tbody>
