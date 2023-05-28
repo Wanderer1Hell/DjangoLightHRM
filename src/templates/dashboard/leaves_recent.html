@@ -181,7 +181,6 @@
 							      <th scope="col">Сотрудник</th>
 							      <th scope="col">Тип</th>
 							      <th scope="col">День (дни)</th>
-							      <th scope="col">Статус</th>
 							      <th scope="col">Действия</th>
 							    </tr>
 							  </thead>
@@ -192,7 +191,7 @@
 							      <td>{{ leave.employee }}</td>
 							      <td>{{ leave.leavetype}}</td>
 							      <td>{{ leave.leave_days }}</td>
-							      <td>{{ leave.status }}</td>
+
 
 							      <td> 
 							      	<a href="{% url 'dashboard:userleaveview' leave.id %}">

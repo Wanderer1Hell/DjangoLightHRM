@@ -152,7 +152,6 @@ span{
                                             </a>
                                             <a class="list-group-item list-group-item-action" id="list-settings-list" data-toggle="list" href="" role="tab" aria-controls=""><span>Примечание</span> <div>{{ leave.reason}}</div>
                                             </a>
-                                             <a class="list-group-item list-group-item-action" id="list-settings-list" data-toggle="list" href="" role="tab" aria-controls=""><span>Статус</span> <div>{{ leave.status}}</div>
                                              </a>
 
                                        
@@ -173,13 +172,10 @@ span{
                         <div class="btn-group btn-group-justified">
                           {%if leave.leave_approved %}
                           <a href="{% url 'dashboard:userleaveunapprove' leave.id %}" class="btn btn-primary" name='unapprove'>ОТКРЫТЬ
-                          </a>
+
                           {% else %}
-                          <a href="{% url 'dashboard:userleaveapprove' leave.id %}" class="btn btn-primary" name='approve'>УТВЕРДИТЬ
-                          </a>
+
                           {% endif %}
-                          <a href="{% url 'dashboard:userleavecancel' leave.id %}" class="btn btn-info" name='cancel'>ОТМЕНИТЬ</a>
-                          <a href="{% url 'dashboard:reject' leave.id %}" class="btn btn-warning" name='reject'>ОТКАЗАТЬ</a>
                         </div>
                       </section>
                     </section>

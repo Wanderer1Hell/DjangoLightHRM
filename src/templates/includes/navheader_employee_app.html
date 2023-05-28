@@ -32,9 +32,6 @@
                               <ul class="dropdown-menu">
                                 {% if request.user.is_superuser %}
                                 <li><a href="{% url 'dashboard:leaveslist' %}">График отпусков</a></li>
-                                <li><a href="{% url 'dashboard:approvedleaveslist' %}">Утверждённые заявления на отпуск</a></li>
-                                <li><a href="{% url 'dashboard:canceleaveslist' %}">Отменённые заявления на отпуск</a></li>
-                                <li><a href="{% url 'dashboard:leavesrejected' %}">Отклонённые заявления на отпуск</a></li>
                                 <li class="divider"></li>
                                 <li><a href="{% url 'dashboard:createleave' %}">Сохранить отпуск сотрудника</a></li>
                                 {% else %}

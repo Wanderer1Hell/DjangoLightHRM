@@ -238,19 +238,17 @@
                 		<div class="container-fluid">
                 			<div class="row">
                 			 	<div class="download-print-action">
-                			  		Download Excel | Pdf | Print <!-- Work on pdf and excel and print -->
-                			  		
+
                 				</div>
                 			</div>
                 		</div>
                 		<table class="table">
 							  <thead>
 							    <tr>
-							      <th scope="col">#</th>
+							      <th scope="col">Табельный номер</th>
 							      <th scope="col">ФИО</th>
 							      <th scope="col">Должность</th>
 							      <th scope="col">Департамент</th>
-							      <th scope="col">Статус</th>
 							      <th scope="col">Действия</th>
 							    </tr>
 							  </thead>
@@ -267,13 +265,6 @@
 							      <td>{{ employee.get_full_name }}</td>
 							      <td>{{ employee.role }}</td>
 							      <td>{{ employee.department }}</td>
-
-							      {% if employee.is_blocked %}
-							      <td>Inactive</td>
-							      {% else %}
-							      <td>active</td>
-							      {% endif %}
-
 							      <td>
 							      	<a href="{% url 'dashboard:employeeinfo' employee.id %}">
 							      	    Подробнее

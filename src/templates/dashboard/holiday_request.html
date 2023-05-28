@@ -1,0 +1,157 @@
+{% extends '_layout.html' %}
+
+{% block title %} {{ title }} {% endblock %}
+
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block navheader %}
+    {% include 'includes/navheader_employee_app.html' %}
+{% endblock %}
+
+{% block stylesheet %}
+<style>
+    /* Стилизация элементов страницы */
+
+    .content-wrapper {
+        background-color: #ffffff;
+        border-radius: 5px;
+        padding: 20px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        margin-bottom: 20px;
+    }
+
+    .form-wrapper {
+        background-color: #f9f9f9;
+        padding: 20px;
+        border-radius: 5px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        margin-bottom: 20px;
+    }
+
+    .form-wrapper label {
+        display: block;
+        margin-bottom: 10px;
+        font-weight: bold;
+    }
+
+    .form-wrapper input[type="text"],
+    .form-wrapper input[type="date"],
+    .form-wrapper select,
+    .form-wrapper textarea {
+        width: 50%;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+        margin-bottom: 10px;
+    }
+
+    .form-wrapper textarea {
+        height: 100px;
+    }
+
+    .form-wrapper input[type="submit"] {
+        background-color: #4caf50;
+        color: #fff;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 16px;
+    }
+
+    .form-wrapper input[type="submit"]:hover {
+        background-color: #45a049;
+    }
+
+    .holiday-list-wrapper {
+        background-color: #f9f9f9;
+        padding: 20px;
+        border-radius: 5px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        margin-bottom: 20px;
+    }
+
+    .holiday-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .holiday-list li {
+        margin-bottom: 10px;
+        position: relative;
+        display: flex;
+        align-items: center;
+    }
+
+    .holiday-list li::before {
+        content: "\2022";
+        color: #4caf50;
+        display: inline-block;
+        width: 1em;
+        margin-right: 0.5em;
+    }
+
+    .holiday-list li .delete-form {
+        display: inline-block;
+        margin-left: auto;
+    }
+
+    .holiday-list li .delete-form button {
+        background-color: transparent;
+        border: none;
+        color: #999999;
+        font-size: 16px;
+        cursor: pointer;
+        padding: 0;
+        margin: 0;
+    }
+
+    .holiday-list li .delete-form button:hover {
+        color: #ff0000;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="content">
+    <div class="container-fluid">
+        <div class="content-wrapper">
+            <div class="form-wrapper">
+                <h1>Добавить праздники</h1>
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="id_date">Дата:</label>
+                        <input type="date" name="date" id="id_date" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="id_name">Название:</label>
+                        <input type="text" name="name" id="id_name" class="form-control">
+                    </div>
+                    <input type="submit" name="save" value="Сохранить" class="btn btn-primary">
+                </form>
+            </div>
+            <div class="holiday-list-wrapper">
+                <h2>Праздничные дни</h2>
+                <ul class="holiday-list">
+                    {% for holiday in holidays %}
+                        <li>{{ holiday.date }} - {{ holiday.name }}
+                            <div class="delete-form">
+                                <form method="post" action="{% url 'dashboard:holiday_delete' holiday.id %}">
+                                    {% csrf_token %}
+                                    <button type="submit">&#10060;</button>
+                                </form>
+                            </div>
+                        </li>
+                    {% empty %}
+                        <li>Праздничных дней нет</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

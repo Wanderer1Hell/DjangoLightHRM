@@ -10,118 +10,142 @@
 {% endblock %}
 
 {% block stylesheet %}
-    .sec {
-        border: 1px solid yellow;
-        background: red;
+<style>
+    /* Стилизация элементов страницы */
+
+    .tab-menu {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 20px;
     }
 
-    .form-wrapper {
-        -webkit-box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 3px 1px -2px rgba(0,0,0,0.12), 0 1px 5px 0 rgba(0,0,0,0.2);
-        box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 3px 1px -2px rgba(0,0,0,0.12), 0 1px 5px 0 rgba(0,0,0,0.2);
-        padding: 2%;
-        background: #fff !important;
-        padding-bottom: 5%;
-    }
-
-    .btn-lg {
-        padding: 8px 30px;
-    }
-
-    .main-panel > .content {
-        padding: 60px 15px;
-        min-height: calc(100% - 123px);
-    }
-
-    #override-start {
-        background: none !important;
-        top: 35% !important;
-        right: 13px;
-        color: #000;
-        font-size: 24px;
-    }
-
-    .alert-warning {
-        background: #fd7b7b;
-    }
-
-    .alert-success {
-        background-color: #82b72a;
-    }
-
-    .alert-success, .alert-warning {
+    .tab {
+        border: none;
+        outline: none;
+        background-color: #f1f1f1;
+        cursor: pointer;
+        padding: 10px 20px;
+        transition: background-color 0.3s;
         font-size: 16px;
     }
 
-    .prev-holder .prev-avatar {
-        border-radius: 50%;
-        width: 250px;
-        height: 250px;
-        -webkit-box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 3px 1px -2px rgba(0,0,0,0.12), 0 1px 5px 0 rgba(0,0,0,0.2);
-        box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 3px 1px -2px rgba(0,0,0,0.12), 0 1px 5px 0 rgba(0,0,0,0.2);
+    .tab:hover {
+        background-color: #ddd;
     }
+
+    .tab.active {
+        background-color: #ccc;
+    }
+
+    .tab-content {
+        display: none;
+        padding: 20px;
+        border: 1px solid #ccc;
+        border-top: none;
+    }
+
+    .form-wrapper {
+        background-color: #f9f9f9;
+        padding: 20px;
+        border-radius: 5px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Дополнительные стили по вашему усмотрению */
+
+    .form-wrapper label {
+        display: block;
+        margin-bottom: 10px;
+        font-weight: bold;
+    }
+
+    .form-wrapper input[type="text"],
+    .form-wrapper input[type="date"],
+    .form-wrapper select,
+    .form-wrapper textarea {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+        margin-bottom: 10px;
+    }
+
+    .form-wrapper textarea {
+        height: 100px;
+    }
+
+    .form-wrapper input[type="submit"] {
+        background-color: #4caf50;
+        color: #fff;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 16px;
+    }
+
+    .form-wrapper input[type="submit"]:hover {
+        background-color: #45a049;
+    }
+</style>
 {% endblock %}
 
 {% block content %}
+<section class="content">
+<div class="container-fluid margin-bottom">
+<div class="form-wrapper">
 <h1>Автоматическое заполнение документа</h1>
 <div class="tab-menu">
-  <button class="tab" onclick="openTab(event, 'tab1')">Приказ о приеме на работу</button>
-  <button class="tab" onclick="openTab(event, 'tab2')">Приказ о расторжении ТД</button>
+<button class="tab" onclick="openTab(event, 'tab1')">Приказ о приеме на работу</button>
+<button class="tab" onclick="openTab(event, 'tab2')">Приказ о расторжении ТД</button>
 </div>
+    <div id="tab1" class="tab-content">
+        <!-- Поля для вкладки 1 -->
+        <div class="form-wrapper">
+            <form method="post" action="{% url 'dashboard:filltemplate' %}">
+                        {% csrf_token %}
+                        <label for="employee">Выберите сотрудника:</label>
+                        <select name="employee" id="employee">
+                            {% for employee in employees %}
+                            <option value="{{ employee.id }}">{{ employee.get_full_name }}</option>
+                            {% endfor %}
+                        </select>
+                        <label for="document-number">Номер документа:</label>
+                        <input type="text" name="document-number" id="document-number">
+                        <label for="date-compiled">Дата составления:</label>
+                        <input type="date" name="date-compiled" id="date-compiled">
+                        <label for="condition">Условие приема на работу:</label>
+                        <textarea name="condition" id="condition"></textarea>
+                        <input type="submit" name="generate-document" value="Сгенерировать документ">
+                    </form>
+                </div>
+            </div>
 
-<div id="tab1" class="tab-content">
-  <!-- Поля для вкладки 1 -->
-  <form method="post" action="{% url 'dashboard:filltemplate' %}">
-    {% csrf_token %}
-    <label for="employee">Выберите сотрудника:</label>
-    <select name="employee" id="employee">
-      {% for employee in employees %}
-      <option value="{{ employee.id }}">{{ employee.get_full_name }}</option>
-      {% endfor %}
-    </select>
-    <div>
-      <label for="document-number">Номер документа:</label>
-      <input type="text" name="document-number" id="document-number">
+            <div id="tab2" class="tab-content" style="display: none;">
+                <!-- Поля для вкладки 2 -->
+                <div class="form-wrapper">
+                    <form method="post" action="{% url 'dashboard:filltemplate_t8' %}">
+                        {% csrf_token %}
+                        <label for="employee-t8">Выберите сотрудника:</label>
+                        <select name="employee-t8" id="employee-t8">
+                            {% for employee in employees %}
+                            <option value="{{ employee.id }}">{{ employee.get_full_name }}</option>
+                            {% endfor %}
+                        </select>
+                        <label for="document-number-t8">Номер документа:</label>
+                        <input type="text" name="document-number-t8" id="document-number-t8">
+                        <label for="date-compiled-t8">Дата составления:</label>
+                        <input type="date" name="date-compiled-t8" id="date-compiled-t8">
+                        <label for="condition-t8">Основание увольнения:</label>
+                        <textarea name="condition-t8" id="condition-t8"></textarea>
+                        <input type="submit" name="generate-document-t8" value="Сгенерировать документ">
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
-    <div>
-      <label for="date-compiled">Дата составления:</label>
-      <input type="date" name="date-compiled" id="date-compiled">
-    </div>
-    <div>
-      <label for="condition">Условие приема на работу:</label>
-      <textarea name="condition" id="condition"></textarea>
-    </div>
-    <input type="submit" name="generate-document" value="Сгенерировать документ">
-  </form>
-</div>
-
-<div id="tab2" class="tab-content" style="display: none;">
-  <!-- Поля для вкладки 2 -->
-  <form method="post" action="{% url 'dashboard:filltemplate_t8' %}">
-    {% csrf_token %}
-    <label for="employee-t8">Выберите сотрудника:</label>
-    <select name="employee-t8" id="employee-t8">
-      {% for employee in employees %}
-      <option value="{{ employee.id }}">{{ employee.get_full_name }}</option>
-      {% endfor %}
-    </select>
-    <div>
-      <label for="document-number-t8">Номер документа:</label>
-      <input type="text" name="document-number-t8" id="document-number-t8">
-    </div>
-    <div>
-      <label for="date-compiled-t8">Дата составления:</label>
-      <input type="date" name="date-compiled-t8" id="date-compiled-t8">
-    </div>
-    <div>
-      <label for="condition-t8">Основание увольнения:</label>
-      <textarea name="condition-t8" id="condition-t8"></textarea>
-    </div>
-    <input type="submit" name="generate-document-t8" value="Сгенерировать документ">
-  </form>
-</div>
-
-
-
+</section>
 <script>
   function openTab(event, tabName) {
     // Скрыть все вкладки
@@ -142,7 +166,3 @@
   }
 </script>
 {% endblock %}
-
-
-
-

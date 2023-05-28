@@ -7,7 +7,7 @@
 	<link rel="icon" type="image/png" href="assets/img/favicon.ico">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
 
-	<title> Rabotec HR - welcome page</title>
+	<title> People pro - страница приветствия</title>
 
 	<meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
   <meta name="viewport" content="width=device-width" />
@@ -122,17 +122,15 @@
                             <span class="icon-bar"></span>
                           </button>
                           {% if request.user.is_authenticated %}
-                          <a class="navbar-brand" href="{% url 'dashboard:dashboard' %}">RABOTEC <span class="sub-title">HRM</span></a>
+                          <a class="navbar-brand" href="{% url 'dashboard:dashboard' %}">PEOPLE<span class="sub-title">PRO</span></a>
                           {% else %}
-                          <a class="navbar-brand" href="/">RABOTEC <span>HRM</span></a>
+                          <a class="navbar-brand" href="/">PEOPLE <span>PRO</span></a>
                           {% endif %}
                         </div>
 
                         <!-- Collect the nav links, forms, and other content for toggling -->
                         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                           <ul class="nav navbar-nav">
-                            <li class=""><a href="http://www.rabotecgroup.com/" target="_blank">rabotec site <span class="sr-only">(current)</span></a></li>
-                            <li><a href="http://webmail.rabotecgroup.com/" target="_blank">rabotec mail</a></li>
                           </ul>
                           <ul class="nav navbar-nav navbar-right">
                             <li><a href="{% url 'accounts:login' %}">Вход в систему</a></li>
@@ -140,17 +138,14 @@
                         </div><!-- /.navbar-collapse -->
                       </div><!-- /.container-fluid -->
                 </nav>
-            <!-- /Naivagtion -->
+            <!-- /ГЛАВНАЯ СТРАНИЦА-->
 
             <div class="container-fluid container-centered-items">
                 <section class="row">
                   <section class="">
                      <section class="col col-lg-12 text-center">
                         <div class="center-me-please">
-                            <h2>RABOTEC EMPLOYEE MANAGEMENT SYSTEM</h2>
-                            <p>This Application helps rabotec employees view their <span>profile</span>,apply for <span>leave</span> and get notification on <span>birthdays</span> <span class="icon">😍🎂😘😍 ...</span></p>
-                            <p>Нажмите, чтобы <a class='' href="{% url 'accounts:login' %}" style="text-decoration: none;color: #c452f7;">войти</a>
-                            </p>
+                            <h2><!-- /ГЛАВНАЯ СТРАНИЦА--> </h2>
                         </div>
                      </section>
                   </section>

@@ -171,34 +171,7 @@
         {% endif %}
       </section>
     </section>
-    <section class="row margin-bottom">
-      <div class="container-fluid">
-        <section class="col-lg-4 col-md-4 col-sm-12">
-          <div class="employee-box sec-box">
-            <a href="">
-              <span>Сотрудники</span>
-            </a>
-            <span class="count-object">{{ untermintaed_employees.count }}</span>
-          </div>
-        </section>
-        <section class="col-lg-4 col-md-4 col-sm-12">
-          <div class="leave-box sec-box">
-            <a href="">
-              <span>Департаменты</span>
-            </a>
-            <span class="count-object deprt">{{ departments.count }}</span>
-          </div>
-        </section>
-        <section class="col-lg-4 col-md-4 col-sm-12">
-          <div class="birthday-box sec-box">
-            <a href="{% url 'accounts:terminated' %}">
-              <span>Уволенные сотрудники</span>
-            </a>
-            <span class="count-object">{{ terminated_employees.count }}</span>
-          </div>
-        </section>
-      </div>
-    </section>
+
     <div class="row" style="margin-bottom: 2.2rem; margin-top: 3rem;">
       <div class="">
         <div class="col-lg-12">
@@ -216,24 +189,24 @@
     </div>
     <div class="table-responsive table-shadow">
       <div class="text-center table-description">
-        <h4 class="title-h3" style="color: #60a0b3 !important; text-shadow: 1px 0px rgba(0,0,0,0.11)">ТАБЛИЦА ВСЕХ
+        <h4 class="title-h3" style="color: #60a0b3 !important; text-shadow: 1px 0px rgba(0,0,0,0.11)">РАСПИСАНИЕ ВСЕХ
           СОТРУДНИКОВ</h4>
       </div>
       <div class="container-fluid">
         <div class="row">
           <div class="download-print-action">
-            Download Excel | Pdf | Print
+
           </div>
         </div>
       </div>
       <table class="table">
         <thead>
           <tr>
-            <th scope="col">#</th>
+            <th scope="col">Табельный номер</th>
             <th scope="col">ФИО</th>
             <th scope="col">Должность</th>
             <th scope="col">Департамент</th>
-            <th scope="col">Статус</th>
+
           </tr>
         </thead>
         <tbody>
@@ -247,11 +220,6 @@
             <td>{{ employee.get_full_name }}</td>
             <td>{{ employee.role }}</td>
             <td>{{ employee.department }}</td>
-            {% if employee.is_blocked %}
-            <td>Inactive</td>
-            {% else %}
-            <td>Active</td>
-            {% endif %}
           <td>
                 <a href="{% url 'dashboard:work_schedule' employee.id %}">
                   Посмотреть расписание

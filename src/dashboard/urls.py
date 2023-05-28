@@ -64,4 +64,8 @@ urlpatterns = [
     path('company/update/<int:id>/', views.company_create_or_update, name='companyupdate'),
     path('company/delete/<int:id>/', views.company_delete, name='companydelete'),
 
+    # Holiday
+    path('holidays/', views.holiday_request, name='holiday_request'),
+    path('holiday-delete/<int:holiday_id>/', views.holiday_delete, name='holiday_delete'),
+
 ]

@@ -9,7 +9,7 @@
 	<link rel="icon" type="image/png" href="assets/img/favicon.ico">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
 
-	<title>Dashboard - rabotec H.R | {% block title %} {{ title }} {% endblock %}</title>
+	<title>People pro {% block title %} {{ title }} {% endblock %}</title>
 
 	<meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
     <meta name="viewport" content="width=device-width" />
@@ -96,7 +96,7 @@
     </style>
 
 <div class="wrapper">
-    <div class="sidebar" data-color="blue" data-image="{% static 'img/sidebar-1.jpg' %}">
+    <div class="sidebar" data-color="blue">
 
     <!--
 
@@ -146,12 +146,7 @@
                         <p>Отпуска</p>
                     </a>
                 </li>
-                <li>
-                    <a href="{% url 'dashboard:birthdays' %}">
-                        <i class="pe-7s-gift"></i>
-                        <p>День рождения {{ employees_birthday.count }}</p>
-                    </a>
-                </li>
+
                 <li>
                     <a href="{% url 'dashboard:filltemplate' %}">
                         <i class=""></i>
@@ -162,6 +157,12 @@
                     <a href="{% url 'dashboard:employee_info_schedule' %}">
                         <i class=""></i>
                         <p>Расписание</p>
+                    </a>
+                </li>
+            <li>
+                    <a href="{% url 'dashboard:holiday_request' %}">
+                        <i class=""></i>
+                        <p>Праздники</p>
                     </a>
                 </li>
             </ul>
@@ -175,7 +176,7 @@
     {% block navheader %}
         {% include 'includes/navheader_default.html' %}
     {% endblock %}
-    <!-- NAVHEADER -->       
+    <!-- NAVHEADER -->
 
         
     <!--CONTENTS-->

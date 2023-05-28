@@ -17,8 +17,7 @@
             <table class="table table-striped">
     <thead>
         <tr>
-            <th scope="col">#</th>
-            <th scope="col">Username</th>
+            <th scope="col">Табельный номер</th>
             <th scope="col">Сотрудник (полное имя)</th>
             <th scope="col">Должность</th>
             <th scope="col">Департамент</th>
@@ -30,7 +29,6 @@
         {% for employee in employees %}
         <tr>
             <td>{{ employee.employeeid }}</td>
-            <td>{{ employee.user.username }}</td>
             <td>{{ employee.get_full_name }}</td>
             <td>{{ employee.role }}</td>
             <td>{{ employee.department }}</td>
@@ -39,6 +37,9 @@
             {% else %}
             <td>Активен</td>
             {% endif %}
+        <td><a href="{% url 'dashboard:employeeinfo' employee.id %}">Подробнее</a>
+
+							      </td>
             <td><a href="{% url 'dashboard:employee_unterminate' employee.id %}">Восстановить</a></td>
         </tr>
         {% endfor %}

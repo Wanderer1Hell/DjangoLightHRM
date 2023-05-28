@@ -85,8 +85,7 @@ class Bank(models.Model):
     WORK_SCHEDULE_CHOICES = [
         (1, '8 часов в день (40 в неделю)'),
         (2, '2,5 часа в день (четыре раза в неделю)'),
-        (3, '8-часов в день, 8-часов в ночь (40 часов в неделю)'),
-        (4, '8-часов в день с выходными'),
+        (3, '2 дня рабочих 2 выходных'),
     ]
 
     employee = models.ForeignKey('employee', help_text='Выберите сотрудника(ов) для добавления банковского счета',
@@ -511,12 +510,12 @@ class Employee(models.Model):
         # print(self.employeeid)
 
 
-SICK = 'sick'
-CASUAL = 'casual'
-EMERGENCY = 'emergency'
-STUDY = 'study'
-BIRTH = 'birth'
-OTHER = 'other'
+SICK = 'ежегодный основной оплачиваемый отпуск'
+CASUAL = 'ежегодный дополнительный оплачиваемый отпуск'
+EMERGENCY = 'отпуск без сохранения заработной платы'
+STUDY = 'учебный отпуск'
+BIRTH = 'отпуск по беременности и родам'
+OTHER = 'другой'
 
 LEAVE_TYPE = (
     (SICK, 'ежегодный основной оплачиваемый отпуск'),
@@ -534,7 +533,7 @@ class Leave(models.Model):
     employee = models.ForeignKey('employee', on_delete=models.CASCADE, default=1, verbose_name='Сотрудник')
     startdate = models.DateField(verbose_name=_('Дата начала'), null=True, blank=False)
     enddate = models.DateField(verbose_name=_('Дата окончания'), null=True, blank=False)
-    leavetype = models.CharField(choices=LEAVE_TYPE, max_length=25, default=SICK, null=True, blank=False,
+    leavetype = models.CharField(choices=LEAVE_TYPE, max_length=44, default=SICK, null=True, blank=False,
                                  verbose_name='Тип отпуска')
     reason = models.CharField(max_length=255, help_text='Добавить дополнительную информацию для отпуска', null=True,
                               blank=True, verbose_name='Примечание')
@@ -557,17 +556,13 @@ class Leave(models.Model):
         ordering = ['-created']  # recent objects
 
     def __str__(self):
-        return ('{0} - {1}'.format(self.leavetype, self.user))
+        return '{0} - {1}'.format(self.leavetype, self.employee.user)
 
     @property
     def pretty_leave(self):
-        '''
-		i don't like the __str__ of leave object - this is a pretty one :-)
-		'''
         leave = self.leavetype
-        user = self.employee.user
-        employee = user.employee_set.first().get_full_name
-        return ('{0} - {1}'.format(employee, leave))
+        employee = self.employee.get_full_name
+        return f'{employee} - {leave}'
 
     @property
     def leave_days(self):
@@ -695,3 +690,8 @@ class MilitaryRecord(models.Model):
 
     created = models.DateTimeField(verbose_name=_('Создано'), auto_now_add=True, null=True)
     updated = models.DateTimeField(verbose_name=_('Обновлено'), auto_now=True, null=True)
+
+
+class Holiday(models.Model):
+    date = models.DateField(_('Дата праздника'), unique=True)
+    name = models.CharField(_('Название праздника'), max_length=100)

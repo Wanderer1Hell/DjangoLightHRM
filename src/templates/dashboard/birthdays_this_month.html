@@ -1,6 +1,6 @@
 
 {% extends '_layout.html' %}
-{% block title %} 😍🎂{{ title }} 😘😍{% endblock %}
+{% block title %} {{ title }} {% endblock %}
 
  {% block navheader %}
  	{% include 'includes/navheader_employee_app.html' %}
@@ -192,7 +192,7 @@
 
 							      {% if employee.birthday_today %}
 
-							       		<td>💝🍾😍🎂😍🍾</td>
+							       		<td> </td>
 
 							      {% elif employee.days_check_date_fade %}
 
@@ -202,7 +202,7 @@
 							     		 <td>{{ employee.birthday_counter}}</td>
 							      
 							      {% endif %}
-							      <!-- if day is today 'present font, animated 	❤️ emoji' or count down -->
+
 							    </tr>
 
 							   

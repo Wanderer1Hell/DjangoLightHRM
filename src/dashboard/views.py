@@ -51,9 +51,6 @@ def dashboard(request):
     return render(request, 'dashboard/dashboard_index.html', dataset)
 
 
-from django.db.models import Q
-
-
 def dashboard_employees(request):
     if not (request.user.is_authenticated and request.user.is_superuser and request.user.is_staff):
         return redirect('/')
@@ -640,7 +637,6 @@ def employee_bank_account_update(request, id):
     return render(request, 'dashboard/bank_account_create_form.html', dataset)
 
 
-
 def dashboard_document_create(request):
     if not (request.user.is_authenticated and request.user.is_superuser and request.user.is_staff):
         return redirect('/')
@@ -799,11 +795,11 @@ def approve_leave(request, id):
     if not (request.user.is_superuser and request.user.is_authenticated):
         return redirect('/')
     leave = get_object_or_404(Leave, id=id)
-    user = leave.user
-    employee = Employee.objects.filter(user=user)[0]
-    leave.approve_leave
+    user = leave.employee.user
+    employee = Employee.objects.filter(user=user).first()  # используйте first() вместо [0]
+    leave.approve_leave()
 
-    messages.error(request, 'Отпуск успешно утвержден для {0}'.format(employee.get_full_name),
+    messages.error(request, 'Отпуск успешно утвержден для {0}'.format(employee.get_full_name()),
                    extra_tags='alert alert-success alert-dismissible show')
     return redirect('dashboard:userleaveview', id=id)
 
@@ -1116,6 +1112,7 @@ def fill_template_document(template_path, data):
 
     return doc
 
+
 def employee_info_schedule(request):
     if not (request.user.is_authenticated and request.user.is_superuser and request.user.is_staff):
         return redirect('/')
@@ -1149,6 +1146,31 @@ def employee_info_schedule(request):
     dataset['title'] = 'Employees list view'
     return render(request, 'dashboard/employee_info_schedule.html', dataset)
 
+
+def holiday_request(request):
+    if request.method == 'POST':
+        date = request.POST.get('date')
+        name = request.POST.get('name')
+
+        Holiday.objects.create(date=date, name=name)
+
+        return redirect('dashboard:holiday_request')
+
+    holidays = Holiday.objects.all()
+
+    context = {
+        'holidays': holidays,
+    }
+    return render(request, 'dashboard/holiday_request.html', context)
+
+
+
+def holiday_delete(request, holiday_id):
+    holiday = get_object_or_404(Holiday, id=holiday_id)
+    holiday.delete()
+    return redirect('dashboard:holiday_request')
+
+
 def work_schedule(request, employee_id):
     employee = Employee.objects.get(id=employee_id)
     bank_records = Bank.objects.filter(employee=employee)
@@ -1156,17 +1178,46 @@ def work_schedule(request, employee_id):
     work_schedule = []
     for record in bank_records:
         if record.work_schedule:
-            work_schedule.extend(record.work_schedule)
+            work_schedule.append(record.work_schedule)
 
     today = date.today()
     num_days = cal.monthrange(today.year, today.month)[1]  # Количество дней в текущем месяце
 
-    schedule = []
-    for i in range(num_days):
-        status = '8'  # По умолчанию статус '8'
-        if i % 7 in (5, 6):  # Если день недели - суббота или воскресенье, статус '0'
-            status = '0'
-        schedule.append(status)
+    schedule = []  # Вставьте эту строку перед циклом if
+
+    if bank_records and bank_records[0].work_schedule == 1:
+        for i in range(num_days):
+            status = '8'
+            if i % 7 in (5, 6):
+                status = '0'
+            elif Holiday.objects.filter(date=date(today.year, today.month, i + 1)).exists():
+                status = 'П'
+            schedule.append(status)
+    elif bank_records and bank_records[0].work_schedule == 2:
+        weekdays = [0, 1, 2, 3]
+        for i in range(num_days):
+            if i % 7 in (5, 6):
+                status = '0'
+            elif i % 7 in weekdays:
+                if Holiday.objects.filter(date=date(today.year, today.month, i + 1)).exists():
+                    status = 'П'
+                else:
+                    status = '2.5'
+            else:
+                status = '0'
+            schedule.append(status)
+    elif bank_records and bank_records[0].work_schedule == 3:
+        for i in range(num_days):
+            if i % 4 < 2:
+                if Holiday.objects.filter(date=date(today.year, today.month, i + 1)).exists():
+                    status = 'П'
+                else:
+                    status = '8'
+            else:
+                status = '0'
+            schedule.append(status)
+    else:
+        schedule = ['none'] * num_days
 
     context = {
         'employee': employee,
@@ -1176,4 +1227,3 @@ def work_schedule(request, employee_id):
     }
 
     return render(request, 'dashboard/work_schedule.html', context)
-
