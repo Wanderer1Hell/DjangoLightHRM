@@ -89,6 +89,10 @@ class EmploymentHistoryForm(forms.ModelForm):
     class Meta:
         model = EmploymentHistory
         fields = ['experience_start_date', 'experience_end_date', 'position', 'organization']
+        widgets = {
+            'experience_start_date': forms.DateInput(attrs={'type': 'date'}),
+            'experience_end_date': forms.DateInput(attrs={'type': 'date'}),
+        }
 
 
 class LeaveCreationForm(forms.ModelForm):

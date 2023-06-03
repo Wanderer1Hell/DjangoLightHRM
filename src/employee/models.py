@@ -122,6 +122,7 @@ class EmploymentHistory(models.Model):
     organization = models.CharField(_('Организация'), max_length=255, null=True, blank=True)
 
 
+
 class Emergency(models.Model):
     FATHER = 'Отец'
     MOTHER = 'Мать'

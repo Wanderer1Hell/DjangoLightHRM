@@ -69,6 +69,9 @@ urlpatterns = [
     path('holiday-delete/<int:holiday_id>/', views.holiday_delete, name='holiday_delete'),
 
     # Experience
-    path('employment-history/<int:employee_id>/', views.employment_history_table, name='employment_history_table'),
-    path('employment-history-save/<int:employee_id>/', views.employment_history_save, name='employment_history_save')
+    path('employment_history/add/<int:employee_id>/', views.employment_history_add, name='employment_history_add'),
+    path('employment_history/edit/<int:employment_history_id>/', views.employment_history_edit, name='employment_history_edit'),
+
+
+
 ]

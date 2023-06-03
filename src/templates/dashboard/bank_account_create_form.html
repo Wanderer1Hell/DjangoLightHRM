@@ -74,7 +74,6 @@
         <section class="form-wrapper">
             <section class="row">
                 <section class="col col-lg-12 col-md-12 col-sm-12">
-
                     {% if messages %}
                         {% for message in messages %}
                             <div {% if message.tags %} class="{{ message.tags }}"{% endif %}>
@@ -84,7 +83,6 @@
                             </div>
                         {% endfor %}
                     {% endif %}
-
                 </section>
             </section>
 
@@ -134,9 +132,7 @@
                                 <td>{{ employment_history.position }}</td>
                                 <td>{{ employment_history.organization }}</td>
                                 <td>
-                                    <a href="{% url 'dashboard:employment_history_table' employee_id=employment_history.employee_id %}">
-                                        Изменить данные
-                                    </a>
+                                <a href="{% url 'dashboard:employment_history_edit' employment_history_id=employment_history.id %}">Изменить данные</a>
                                 </td>
                             </tr>
                             {% empty %}
@@ -147,12 +143,11 @@
                         </tbody>
                     </table>
                     <section>
-                        <a href="{% url 'dashboard:employment_history_table' employee_id=employee_id %}">Добавить данные</a>
+                        <a href="{% url 'dashboard:employment_history_add' employee_id=employee_id %}">Добавить данные</a>
                     </section>
+                 </section>
                 </section>
             </section>
-
-        </section>
 
     </section> <!-- /container -->
 </section>

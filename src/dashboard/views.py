@@ -1257,52 +1257,65 @@ def work_schedule(request, employee_id):
 
 # ---------------------experience -------------------------------------------
 
-def employment_history_table(request, employee_id):
+def employment_history_add(request, employee_id):
     employee = get_object_or_404(Employee, id=employee_id)
 
-    try:
-        employment_history = EmploymentHistory.objects.get(employee=employee)
-    except ObjectDoesNotExist:
-        employment_history = EmploymentHistory(employee=employee)
+    if request.method == 'POST':
+        form = EmploymentHistoryForm(request.POST)
+        if form.is_valid():
+            employment_history = form.save(commit=False)
+            employment_history.employee = employee
+            employment_history.save()
+
+            # Получение объекта Bank по employee_id
+            bank = Bank.objects.get(employee_id=employee_id)
+            bank_id = bank.id
+
+            messages.success(request, 'Запись успешно добавлена', extra_tags='alert alert-success alert-dismissible show')
+
+            return redirect('dashboard:accountedit', id=bank_id)
+    else:
+        form = EmploymentHistoryForm()
+
+    context = {
+        'form': form,
+        'title': 'Добавить данные',
+        'employee_id': employee_id,
+        'employment_history_list': EmploymentHistory.objects.filter(employee=employee)
+    }
+
+    return render(request, 'dashboard/employment_history_add.html', context)
+
+
+def employment_history_edit(request, employment_history_id):
+    employment_history = get_object_or_404(EmploymentHistory, id=employment_history_id)
 
     if request.method == 'POST':
         form = EmploymentHistoryForm(request.POST, instance=employment_history)
         if form.is_valid():
             form.save()
-            return redirect('dashboard:employment_history_table', employee_id=employee_id)
+            messages.success(request, 'Запись успешно обновлена',
+                             extra_tags='alert alert-success alert-dismissible show')
+
+            return redirect('dashboard:employment_history_edit', employment_history_id=employment_history.id)
+
     else:
         form = EmploymentHistoryForm(instance=employment_history)
 
     context = {
-        'employee': employee,
         'form': form,
-        'title': 'История занятости',
-        'employment_history': employment_history  # Передача объекта employment_history в контекст
+        'title': 'Редактировать запись',
+        'employment_history': employment_history,
+        'employment_history_list': EmploymentHistory.objects.all()
     }
-
-    return render(request, 'dashboard/employment_history_table.html', context)
-
+    return render(request, 'dashboard/employment_history_edit.html', context)
 
 
-# views.py
 
-from django.contrib import messages
 
-def employment_history_save(request, employee_id):
-    if request.method == 'POST':
-        employee = get_object_or_404(Employee, id=employee_id)
-        try:
-            employment_history = EmploymentHistory.objects.get(employee=employee)
-        except ObjectDoesNotExist:
-            employment_history = EmploymentHistory(employee=employee)
 
-        form = EmploymentHistoryForm(request.POST, instance=employment_history)
-        if form.is_valid():
-            form.save()
-            messages.success(request, 'Данные успешно сохранены', extra_tags='alert alert-success alert-dismissible show')
-            return redirect('dashboard:employment_history_table', employee_id=employee_id)
 
-    return redirect('dashboard:employment_history_table', employee_id=employee_id)
+
 
 
 
