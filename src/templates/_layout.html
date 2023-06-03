@@ -9,7 +9,7 @@
 	<link rel="icon" type="image/png" href="assets/img/favicon.ico">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
 
-	<title>People pro {% block title %} {{ title }} {% endblock %}</title>
+	<title>Lite HRM {% block title %} {{ title }} {% endblock %}</title>
 
 	<meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
     <meta name="viewport" content="width=device-width" />
@@ -107,7 +107,7 @@
     	<div class="sidebar-wrapper">
             <div class="logo">
                 <a href="{% url "dashboard:dashboard" %}" class="simple-text">
-                    People <span>Pro</span>
+                    Lite<span>HRM</span>
                 </a>
             </div>
 
@@ -139,12 +139,6 @@
                 </li>
                 {% endif %}
 
-                <li>
-                    {% if request.user.is_superuser %}<a href="{% url 'dashboard:leaveslist' %}">{% else %}<a href="{% url 'dashboard:staffleavetable' %}"> {% endif %}
-                        <i class="pe-7s-plane"></i>
-                        <p>Отпуска</p>
-                    </a>
-                </li>
 
                 <li>
                     <a href="{% url 'dashboard:filltemplate' %}">
@@ -162,6 +156,18 @@
                     <a href="{% url 'dashboard:holiday_request' %}">
                         <i class="pe-7s-gift"></i>
                         <p>Праздники</p>
+                    </a>
+                </li>
+                <li>
+                    {% if request.user.is_superuser %}<a href="{% url 'dashboard:leaveslist' %}">{% else %}<a href="{% url 'dashboard:staffleavetable' %}"> {% endif %}
+                        <i class="pe-7s-plane"></i>
+                        <p>Отпуска</p>
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'dashboard:holiday_request' %}">
+                        <i class="pe-7s-bandaid"></i>
+                        <p>Больничные</p>
                     </a>
                 </li>
             </ul>
@@ -193,7 +199,7 @@
         <footer class="footer">
             <div class="container-fluid">
                 <p class="copyright pull-right">
-                    &copy; <script>document.write(new Date().getFullYear())</script> <a href="">PEOPLE PRO.</a>
+                    &copy; <script>document.write(new Date().getFullYear())</script> <a href="">Lite HRM.</a>
                 </p>
             </div>
         </footer>

@@ -97,6 +97,10 @@ class Bank(models.Model):
                               null=True)
     salary = models.DecimalField(_('Оклад'), max_digits=16, decimal_places=2, null=True, blank=False)
     work_schedule = models.IntegerField(_('График работы'), choices=WORK_SCHEDULE_CHOICES, null=True, blank=True)
+    labor_book_series = models.CharField(_('Серия трудовой книжки'), max_length=10, null=True, blank=True)
+    labor_book_number = models.CharField(_('Номер трудовой книжки'), max_length=10, null=True, blank=True)
+    labor_book_issue_date = models.DateField(_('Дата выдачи трудовой книжки'), null=True, blank=True)
+    labor_book_in_possession = models.BooleanField(_('Трудовая книжка на руках'), default=False)
 
     created = models.DateTimeField(verbose_name=_('Создано'), auto_now_add=True, null=True)
     updated = models.DateTimeField(verbose_name=_('Обновлено'), auto_now=True, null=True)
@@ -108,6 +112,14 @@ class Bank(models.Model):
 
     def __str__(self):
         return str(self.name)
+
+
+class EmploymentHistory(models.Model):
+    employee = models.ForeignKey('employee', on_delete=models.CASCADE)
+    experience_start_date = models.DateField(_('Дата начала'), null=True, blank=True)
+    experience_end_date = models.DateField(_('Дата окончания'), null=True, blank=True)
+    position = models.CharField(_('Должность'), max_length=255, null=True, blank=True)
+    organization = models.CharField(_('Организация'), max_length=255, null=True, blank=True)
 
 
 class Emergency(models.Model):

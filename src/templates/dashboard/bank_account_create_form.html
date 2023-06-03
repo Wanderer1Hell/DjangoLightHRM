@@ -65,7 +65,7 @@
   {% endblock %}
 
 
-  
+
 
 {% block content %}
 <section class="content">
@@ -112,7 +112,44 @@
                         <button type="submit" class="btn btn-primary btn-lg btn-block">Сохранить</button>
                     </form>
                 </section>
+            </section>
 
+            <section class="row">
+                <section class="col-lg-12 col-md-12 col-sm-12">
+                    <table id="employment-history-table" class="table">
+                        <thead>
+                            <tr>
+                                <th>Дата начала</th>
+                                <th>Дата окончания</th>
+                                <th>Должность</th>
+                                <th>Организация</th>
+                                <th>Действия</th>
+                            </tr>
+                        </thead>
+                       <tbody>
+                            {% for employment_history in employment_history_list %}
+                            <tr>
+                                <td>{{ employment_history.experience_start_date }}</td>
+                                <td>{{ employment_history.experience_end_date }}</td>
+                                <td>{{ employment_history.position }}</td>
+                                <td>{{ employment_history.organization }}</td>
+                                <td>
+                                    <a href="{% url 'dashboard:employment_history_table' employee_id=employment_history.employee_id %}">
+                                        Изменить данные
+                                    </a>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="5">Нет доступных записей</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    <section>
+                        <a href="{% url 'dashboard:employment_history_table' employee_id=employee_id %}">Добавить данные</a>
+                    </section>
+                </section>
             </section>
 
         </section>
@@ -120,7 +157,6 @@
     </section> <!-- /container -->
 </section>
 {% endblock %}
-
 <script type="text/javascript">
     {% block extrajs %}
 

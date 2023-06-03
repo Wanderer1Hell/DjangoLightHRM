@@ -2,7 +2,7 @@ from datetime import datetime
 
 from django import forms
 from employee.models import Role, Department, Nationality, Religion, Bank, Emergency, Relationship, Employee, Document, \
-    Leave, Company, MilitaryRecord, Holiday
+    Leave, Company, MilitaryRecord, Holiday, EmploymentHistory
 from django.contrib.auth.models import User
 
 
@@ -85,6 +85,12 @@ class BankAccountCreation(forms.ModelForm):
         fields = ['employee', 'name', 'branch', 'account', 'salary', 'work_schedule']
 
 
+class EmploymentHistoryForm(forms.ModelForm):
+    class Meta:
+        model = EmploymentHistory
+        fields = ['experience_start_date', 'experience_end_date', 'position', 'organization']
+
+
 class LeaveCreationForm(forms.ModelForm):
     reason = forms.CharField(
         required=False,
@@ -129,4 +135,3 @@ class CompanyForm(forms.ModelForm):
             'leader_namemiddle': forms.TextInput(attrs={'class': 'myformcontrol'}),
             'position': forms.TextInput(attrs={'class': 'myformcontrol'}),
         }
-

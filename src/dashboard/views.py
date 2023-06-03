@@ -1,6 +1,8 @@
 import os
 import calendar as cal
 from datetime import datetime, timedelta, date
+
+from django.core.exceptions import ObjectDoesNotExist
 from django.utils import timezone
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.shortcuts import render, redirect, get_object_or_404
@@ -12,7 +14,7 @@ from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
 from docx.shared import Pt
 
 from employee.forms import EmployeeCreateForm, EmergencyCreateForm, FamilyCreateForm, BankAccountCreation, \
-    DocumentCreateForm, CompanyForm, MilitaryCreateForm
+    DocumentCreateForm, CompanyForm, MilitaryCreateForm, EmploymentHistoryForm
 from docx import Document as Docxdoc
 from employee.models import *
 from employee.forms import LeaveCreationForm
@@ -46,7 +48,7 @@ def dashboard(request):
     dataset['leaves'] = leaves
     dataset['employees_birthday'] = employees_birthday
     dataset['staff_leaves'] = staff_leaves
-    dataset['title'] = 'summary'
+    dataset['title'] = 'Панель'
 
     return render(request, 'dashboard/dashboard_index.html', dataset)
 
@@ -81,7 +83,7 @@ def dashboard_employees(request):
     blocked_employees = Employee.objects.all_blocked_employees()
 
     dataset['blocked_employees'] = blocked_employees
-    dataset['title'] = 'Employees list view'
+    dataset['title'] = 'Сотрудники'
     return render(request, 'dashboard/employee_app.html', dataset)
 
 
@@ -145,7 +147,7 @@ def dashboard_employees_create(request):
     dataset = dict()
     form = EmployeeCreateForm()
     dataset['form'] = form
-    dataset['title'] = 'register employee'
+    dataset['title'] = 'Добавление сотрудника'
     return render(request, 'dashboard/employee_create.html', dataset)
 
 
@@ -291,7 +293,7 @@ def dashboard_employee_info(request, id):
     dataset['bank'] = bank_instance
     dataset['documents'] = documents
     dataset['military'] = employee_military_instance
-    dataset['title'] = 'profile - {0}'.format(employee.get_full_name)
+    dataset['title'] = 'Профиль - {0}'.format(employee.get_full_name)
     return render(request, 'dashboard/employee_detail.html', dataset)
 
 
@@ -613,6 +615,8 @@ def employee_bank_account_update(request, id):
 
     bank_instance_obj = get_object_or_404(Bank, id=id)
     employee = bank_instance_obj.employee
+    employee_id = employee.id  # Получаем ID сотрудника
+    employment_history_list = EmploymentHistory.objects.filter(employee=employee)
 
     if request.method == 'POST':
         form = BankAccountCreation(request.POST, instance=bank_instance_obj)
@@ -624,17 +628,20 @@ def employee_bank_account_update(request, id):
 
             messages.success(request, 'Данные успешно отредактированы для {0}'.format(employee.get_full_name),
                              extra_tags='alert alert-success alert-dismissible show')
-            return redirect('dashboard:bankaccountcreate')
+            return redirect('dashboard:bank_account_create', employee_id=employee_id)
         else:
             messages.error(request, 'Ошибка обновления данных',
                            extra_tags='alert alert-warning alert-dismissible show')
-            return redirect('dashboard:bankaccountcreate')
+            return redirect('dashboard:bank_account_create', employee_id=employee_id)
 
     dataset = dict()
     form = BankAccountCreation(instance=bank_instance_obj)
     dataset['form'] = form
+    dataset['employee_id'] = employee_id  # Передаем employee_id в контексте
+    dataset['employment_history_list'] = employment_history_list  # Передаем список записей истории занятости в контексте
     dataset['title'] = 'Данные об условиях труда (заработная плата)'
     return render(request, 'dashboard/bank_account_create_form.html', dataset)
+
 
 
 def dashboard_document_create(request):
@@ -771,14 +778,14 @@ def leaves_list(request):
     if not (request.user.is_staff and request.user.is_superuser):
         return redirect('/')
     leaves = Leave.objects.all_pending_leaves()
-    return render(request, 'dashboard/leaves_recent.html', {'leave_list': leaves, 'title': 'leaves list - pending'})
+    return render(request, 'dashboard/leaves_recent.html', {'leave_list': leaves, 'title': 'Список отпусков'})
 
 
 def leaves_approved_list(request):
     if not (request.user.is_superuser and request.user.is_staff):
         return redirect('/')
     leaves = Leave.objects.all_approved_leaves()  # approved leaves -> calling model manager method
-    return render(request, 'dashboard/leaves_approved.html', {'leave_list': leaves, 'title': 'approved leave list'})
+    return render(request, 'dashboard/leaves_approved.html', {'leave_list': leaves, 'title': 'Утверждённые отпуска'})
 
 
 def leaves_view(request, id):
@@ -808,7 +815,7 @@ def cancel_leaves_list(request):
     if not (request.user.is_superuser and request.user.is_authenticated):
         return redirect('/')
     leaves = Leave.objects.all_cancel_leaves()
-    return render(request, 'dashboard/leaves_cancel.html', {'leave_list_cancel': leaves, 'title': 'Cancel leave list'})
+    return render(request, 'dashboard/leaves_cancel.html', {'leave_list_cancel': leaves, 'title': 'Отменённые отпуска'})
 
 
 def unapprove_leave(request, id):
@@ -881,7 +888,7 @@ def view_my_leave_table(request):
         dataset = dict()
         dataset['leave_list'] = leaves
         dataset['employee'] = employee
-        dataset['title'] = 'Leaves List'
+        dataset['title'] = 'Отпуска'
     else:
         return redirect('accounts:login')
     return render(request, 'dashboard/staff_leaves_table.html', dataset)
@@ -900,7 +907,7 @@ def birthday_this_month(request):
         'birthdays': employees,
         'month': month,
         'count_birthdays': employees.count(),
-        'title': 'Birthdays'
+        'title': 'Дни рождения'
     }
     return render(request, 'dashboard/birthdays_this_month.html', context)
 
@@ -1143,7 +1150,7 @@ def employee_info_schedule(request):
     blocked_employees = Employee.objects.all_blocked_employees()
 
     dataset['blocked_employees'] = blocked_employees
-    dataset['title'] = 'Employees list view'
+    dataset['title'] = 'Расписание'
     return render(request, 'dashboard/employee_info_schedule.html', dataset)
 
 
@@ -1162,7 +1169,6 @@ def holiday_request(request):
         'holidays': holidays,
     }
     return render(request, 'dashboard/holiday_request.html', context)
-
 
 
 def holiday_delete(request, holiday_id):
@@ -1247,4 +1253,59 @@ def work_schedule(request, employee_id):
     }
 
     return render(request, 'dashboard/work_schedule.html', context)
+
+
+# ---------------------experience -------------------------------------------
+
+def employment_history_table(request, employee_id):
+    employee = get_object_or_404(Employee, id=employee_id)
+
+    try:
+        employment_history = EmploymentHistory.objects.get(employee=employee)
+    except ObjectDoesNotExist:
+        employment_history = EmploymentHistory(employee=employee)
+
+    if request.method == 'POST':
+        form = EmploymentHistoryForm(request.POST, instance=employment_history)
+        if form.is_valid():
+            form.save()
+            return redirect('dashboard:employment_history_table', employee_id=employee_id)
+    else:
+        form = EmploymentHistoryForm(instance=employment_history)
+
+    context = {
+        'employee': employee,
+        'form': form,
+        'title': 'История занятости',
+        'employment_history': employment_history  # Передача объекта employment_history в контекст
+    }
+
+    return render(request, 'dashboard/employment_history_table.html', context)
+
+
+
+# views.py
+
+from django.contrib import messages
+
+def employment_history_save(request, employee_id):
+    if request.method == 'POST':
+        employee = get_object_or_404(Employee, id=employee_id)
+        try:
+            employment_history = EmploymentHistory.objects.get(employee=employee)
+        except ObjectDoesNotExist:
+            employment_history = EmploymentHistory(employee=employee)
+
+        form = EmploymentHistoryForm(request.POST, instance=employment_history)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Данные успешно сохранены', extra_tags='alert alert-success alert-dismissible show')
+            return redirect('dashboard:employment_history_table', employee_id=employee_id)
+
+    return redirect('dashboard:employment_history_table', employee_id=employee_id)
+
+
+
+
+
 
