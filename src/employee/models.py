@@ -380,9 +380,7 @@ class Employee(models.Model):
 
     education = models.CharField(_('Образование'), help_text='Уровень образования', max_length=38, default=SENIORHIGH,
                                  choices=EDUCATIONAL_LEVEL, blank=False, null=True)
-    lastwork = models.CharField(_('Последнее место работы'), max_length=125, null=True, blank=True)
-    position = models.CharField(_('Занимаемая должность'), help_text='Занимаемая должность на последнем месте работы?',
-                                max_length=255, null=True, blank=True)
+
     # COMPANY DATA
     department = models.ForeignKey(Department, verbose_name=_('Департамент'), on_delete=models.SET_NULL, null=True,
                                    default=None)

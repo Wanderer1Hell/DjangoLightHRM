@@ -617,6 +617,8 @@ def employee_bank_account_update(request, id):
     employee = bank_instance_obj.employee
     employee_id = employee.id  # Получаем ID сотрудника
     employment_history_list = EmploymentHistory.objects.filter(employee=employee)
+    bank = Bank.objects.get(employee=employee)  # Получаем связанную запись Bank для сотрудника
+    bank_id = bank.id
 
     if request.method == 'POST':
         form = BankAccountCreation(request.POST, instance=bank_instance_obj)
@@ -628,11 +630,11 @@ def employee_bank_account_update(request, id):
 
             messages.success(request, 'Данные успешно отредактированы для {0}'.format(employee.get_full_name),
                              extra_tags='alert alert-success alert-dismissible show')
-            return redirect('dashboard:bank_account_create', employee_id=employee_id)
+            return redirect('dashboard:accountedit', id=bank_id)
         else:
             messages.error(request, 'Ошибка обновления данных',
                            extra_tags='alert alert-warning alert-dismissible show')
-            return redirect('dashboard:bank_account_create', employee_id=employee_id)
+            return redirect('dashboard:accountedit', id=bank_id)
 
     dataset = dict()
     form = BankAccountCreation(instance=bank_instance_obj)
