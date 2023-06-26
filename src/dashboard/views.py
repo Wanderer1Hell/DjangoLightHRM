@@ -1,17 +1,20 @@
 import os
 import calendar as cal
-from datetime import datetime, timedelta, date
+import datetime
 
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils import timezone
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse, HttpResponseRedirect
-from django.db.models import Q
+from django.db.models import Q, ExpressionWrapper, When
 from django.contrib import messages
 from docx.enum.style import WD_STYLE_TYPE
 from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
 from docx.shared import Pt
+from decimal import Decimal
+from dateutil.relativedelta import relativedelta
+from django.urls import reverse
 
 from employee.forms import EmployeeCreateForm, EmergencyCreateForm, FamilyCreateForm, BankAccountCreation, \
     DocumentCreateForm, CompanyForm, MilitaryCreateForm, EmploymentHistoryForm
@@ -640,10 +643,10 @@ def employee_bank_account_update(request, id):
     form = BankAccountCreation(instance=bank_instance_obj)
     dataset['form'] = form
     dataset['employee_id'] = employee_id  # Передаем employee_id в контексте
-    dataset['employment_history_list'] = employment_history_list  # Передаем список записей истории занятости в контексте
+    dataset[
+        'employment_history_list'] = employment_history_list  # Передаем список записей истории занятости в контексте
     dataset['title'] = 'Данные об условиях труда (заработная плата)'
     return render(request, 'dashboard/bank_account_create_form.html', dataset)
-
 
 
 def dashboard_document_create(request):
@@ -1018,6 +1021,227 @@ def fill_template_t8(request):
     return render(request, 'fill_template.html', {'employees': employees})
 
 
+def fill_template_t6(request):
+    if request.method == 'POST' and 'generate-document-t6' in request.POST:
+        employee_id = request.POST.get('employee-t6')
+        employee = Employee.objects.get(id=employee_id)
+
+        role_id = employee.role_id
+        role = Role.objects.get(id=role_id)
+        role_title = role.name
+
+        departament_id = employee.department_id
+        departament = Department.objects.get(id=departament_id)
+        departament_title = departament.name
+
+        company = Company.objects.first()
+
+        leavetype = employee.leave_set.first().leavetype if employee.leave_set.exists() else ' '
+        leave_days = employee.leave_set.first().leave_days if employee.leave_set.exists() else 10
+
+        template_path = os.path.join(os.path.dirname(BASE_DIR), 'src', 'static_cdn', 'doctemplates', 't6.docx')
+
+        document_number = request.POST.get('document-number-t6')
+        date_compiled = request.POST.get('date-compiled-t6')
+        data = {
+            '{{name}}': employee.firstname,
+            '{{lastname}}': employee.lastname,
+            '{{othername}}': employee.othername,
+            '{{role}}': role_title,
+            '{{departament}}': departament_title,
+            '{{company}}': company.name,
+            '{{position_master}}': company.position,
+            '{{employeeid}}': employee.employeeid,
+            '{{document_number}}': document_number,
+            '{{date_compiled}}': date_compiled,
+            '{{leavetype}}': leavetype,
+            '{{leave_days}}': leave_days,
+        }
+
+        filled_doc = fill_template_document(template_path, data)
+
+        # Генерация пути к файлу документа
+        folder_path = os.path.join('documents', timezone.now().strftime('%Y/%m/%d'))
+        os.makedirs(os.path.join(settings.MEDIA_ROOT, folder_path), exist_ok=True)
+        file_name = 'prikaz_na_otpusk.docx'
+
+        # Проверка наличия файла с таким же именем
+        i = 1
+        while os.path.exists(os.path.join(settings.MEDIA_ROOT, folder_path, file_name)):
+            # Добавление уникального номера к имени файла
+            base_name, extension = os.path.splitext(file_name)
+            file_name = f'{base_name}_{i}{extension}'
+            i += 1
+
+        # Сохранение заполненного документа
+        file_path = os.path.join(folder_path, file_name)
+        filled_doc.save(os.path.join(settings.MEDIA_ROOT, file_path))
+
+        # Создание и сохранение объекта Document
+        document = Document.objects.create(
+            employee=employee,
+            document_file=file_path,
+            filename='Приказ на отпуск'
+        )
+
+        # Отправка заполненного документа в качестве ответа
+        response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
+        response['Content-Disposition'] = f'attachment; filename={file_name}'
+        filled_doc.save(response)
+
+        return response
+
+    # Если метод запроса не POST или кнопка "Сгенерировать документ" не была нажата,
+    # просто рендерим шаблон без выполнения генерации документа
+    employees = Employee.objects.all()
+    return render(request, 'fill_template.html', {'employees': employees})
+
+
+def fill_template_t11(request):
+    if request.method == 'POST' and 'generate-document-t11' in request.POST:
+        employee_id = request.POST.get('employee-t11')
+        employee = Employee.objects.get(id=employee_id)
+
+        role_id = employee.role_id
+        role = Role.objects.get(id=role_id)
+        role_title = role.name
+
+        departament_id = employee.department_id
+        departament = Department.objects.get(id=departament_id)
+        departament_title = departament.name
+
+        company = Company.objects.first()
+        condition = request.POST.get('condition-t11')
+        motive = request.POST.get('motive-t11')
+        amount = (request.POST.get('amount-t11'))
+        amountwr = request.POST.get('amountwr-t11')
+
+        template_path = os.path.join(os.path.dirname(BASE_DIR), 'src', 'static_cdn', 'doctemplates', 't11.docx')
+
+        document_number = request.POST.get('document-number-t11')
+        date_compiled = request.POST.get('date-compiled-t11')
+        data = {
+            '{{name}}': employee.firstname,
+            '{{lastname}}': employee.lastname,
+            '{{othername}}': employee.othername,
+            '{{role}}': role_title,
+            '{{departament}}': departament_title,
+            '{{company}}': company.name,
+            '{{position_master}}': company.position,
+            '{{employeeid}}': employee.employeeid,
+            '{{document_number}}': document_number,
+            '{{date_compiled}}': date_compiled,
+            '{{condition}}': condition,
+            '{{motive}}': motive,
+            '{{amount}}': amount,
+            '{{amountwr}}': amountwr,
+
+        }
+
+        filled_doc = fill_template_document(template_path, data)
+
+        # Генерация пути к файлу документа
+        folder_path = os.path.join('documents', timezone.now().strftime('%Y/%m/%d'))
+        os.makedirs(os.path.join(settings.MEDIA_ROOT, folder_path), exist_ok=True)
+        file_name = 'prikaz-o-pooschrenii.docx'
+
+        # Проверка наличия файла с таким же именем
+        i = 1
+        while os.path.exists(os.path.join(settings.MEDIA_ROOT, folder_path, file_name)):
+            # Добавление уникального номера к имени файла
+            base_name, extension = os.path.splitext(file_name)
+            file_name = f'{base_name}_{i}{extension}'
+            i += 1
+
+        # Сохранение заполненного документа
+        file_path = os.path.join(folder_path, file_name)
+        filled_doc.save(os.path.join(settings.MEDIA_ROOT, file_path))
+
+        # Создание и сохранение объекта Document
+        document = Document.objects.create(
+            employee=employee,
+            document_file=file_path,
+            filename='Приказ о поощрении работника'
+        )
+
+        # Отправка заполненного документа в качестве ответа
+        response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
+        response['Content-Disposition'] = f'attachment; filename={file_name}'
+        filled_doc.save(response)
+
+        return response
+
+    # Если метод запроса не POST или кнопка "Сгенерировать документ" не была нажата,
+    # просто рендерим шаблон без выполнения генерации документа
+    employees = Employee.objects.all()
+    return render(request, 'fill_template.html', {'employees': employees})
+
+
+def fill_template_t2(request):
+    if request.method == 'POST' and 'generate-document-t2' in request.POST:
+        employee_id = request.POST.get('employee-t2')
+        employee = Employee.objects.get(id=employee_id)
+
+        company = Company.objects.first()
+        condition = request.POST.get('condition-t2')
+        date_incident = request.POST.get('date_incident-t2')
+        reason = request.POST.get('reason-t2')
+
+        template_path = os.path.join(os.path.dirname(BASE_DIR), 'src', 'static_cdn', 'doctemplates', 't2.docx')
+
+        document_number = request.POST.get('document-number-t2')
+        date_compiled = request.POST.get('date-compiled-t2')
+        data = {
+            '{{name}}': employee.firstname,
+            '{{lastname}}': employee.lastname,
+            '{{othername}}': employee.othername,
+            '{{company}}': company.name,
+            '{{condition}}': condition,
+            '{{document_number}}': document_number,
+            '{{date_compiled}}': date_compiled,
+            '{{date_incident}}': date_incident,
+            '{{reason}}': reason,
+        }
+
+        filled_doc = fill_template_document(template_path, data)
+
+        # Генерация пути к файлу документа
+        folder_path = os.path.join('documents', timezone.now().strftime('%Y/%m/%d'))
+        os.makedirs(os.path.join(settings.MEDIA_ROOT, folder_path), exist_ok=True)
+        file_name = 'prikaza-o-vzyskanii.docx'
+
+        # Проверка наличия файла с таким же именем
+        i = 1
+        while os.path.exists(os.path.join(settings.MEDIA_ROOT, folder_path, file_name)):
+            # Добавление уникального номера к имени файла
+            base_name, extension = os.path.splitext(file_name)
+            file_name = f'{base_name}_{i}{extension}'
+            i += 1
+
+        # Сохранение заполненного документа
+        file_path = os.path.join(folder_path, file_name)
+        filled_doc.save(os.path.join(settings.MEDIA_ROOT, file_path))
+
+        # Создание и сохранение объекта Document
+        document = Document.objects.create(
+            employee=employee,
+            document_file=file_path,
+            filename='Приказ о взыскании'
+        )
+
+        # Отправка заполненного документа в качестве ответа
+        response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
+        response['Content-Disposition'] = f'attachment; filename={file_name}'
+        filled_doc.save(response)
+
+        return response
+
+    # Если метод запроса не POST или кнопка "Сгенерировать документ" не была нажата,
+    # просто рендерим шаблон без выполнения генерации документа
+    employees = Employee.objects.all()
+    return render(request, 'fill_template.html', {'employees': employees})
+
+
 def fill_template(request):
     if request.method == 'POST' and 'generate-document' in request.POST:
         employee_id = request.POST.get('employee')
@@ -1038,7 +1262,7 @@ def fill_template(request):
 
         company = Company.objects.first()
 
-        template_path = os.path.join(os.path.dirname(BASE_DIR), 'src', 'static_cdn', 'doctemplates', 't1.docx')
+        template_path = os.path.join(os.path.dirname(BASE_DIR), 'src', 'static_cdn', 'doctemplates', 't2.docx')
 
         document_number = request.POST.get('document-number')
         date_compiled = request.POST.get('date-compiled')
@@ -1196,7 +1420,7 @@ def work_schedule(request, employee_id):
         if record.work_schedule:
             work_schedule.append(record.work_schedule)
 
-    today = date.today()
+    today = datetime.date.today()
     num_days = cal.monthrange(today.year, today.month)[1]  # Количество дней в текущем месяце
 
     schedule = []
@@ -1206,7 +1430,7 @@ def work_schedule(request, employee_id):
             status = '8'
             if i % 7 in (5, 6):
                 status = '0'
-            elif Holiday.objects.filter(date=date(today.year, today.month, i + 1)).exists():
+            elif Holiday.objects.filter(date=datetime.date(today.year, today.month, i + 1)).exists():
                 status = 'П'
             if status in status_colors:
                 status_color = status_colors[status]
@@ -1219,7 +1443,7 @@ def work_schedule(request, employee_id):
             if i % 7 in (5, 6):
                 status = '0'
             elif i % 7 in weekdays:
-                if Holiday.objects.filter(date=date(today.year, today.month, i + 1)).exists():
+                if Holiday.objects.filter(date=datetime.date(today.year, today.month, i + 1)).exists():
                     status = 'П'
                 else:
                     status = '2.5'
@@ -1233,7 +1457,7 @@ def work_schedule(request, employee_id):
     elif bank_records and bank_records[0].work_schedule == 3:
         for i in range(num_days):
             if i % 4 < 2:
-                if Holiday.objects.filter(date=date(today.year, today.month, i + 1)).exists():
+                if Holiday.objects.filter(date=datetime.date(today.year, today.month, i + 1)).exists():
                     status = 'П'
                 else:
                     status = '8'
@@ -1273,7 +1497,8 @@ def employment_history_add(request, employee_id):
             bank = Bank.objects.get(employee_id=employee_id)
             bank_id = bank.id
 
-            messages.success(request, 'Запись успешно добавлена', extra_tags='alert alert-success alert-dismissible show')
+            messages.success(request, 'Запись успешно добавлена',
+                             extra_tags='alert alert-success alert-dismissible show')
 
             return redirect('dashboard:accountedit', id=bank_id)
     else:
@@ -1313,14 +1538,126 @@ def employment_history_edit(request, employment_history_id):
     return render(request, 'dashboard/employment_history_edit.html', context)
 
 
+def calculate_total_experience(employee):
+    employment_history = EmploymentHistory.objects.filter(employee=employee)
+    total_experience = relativedelta()
+
+    for history in employment_history:
+        if history.experience_start_date and history.experience_end_date:
+            experience_start_date = history.experience_start_date
+            experience_end_date = history.experience_end_date
+            total_experience += relativedelta(experience_end_date, experience_start_date)
+
+    return total_experience
 
 
+def calculate_payment(total_experience, mrot, salary, start_date, end_date):
+    total_payment = Decimal(0)
+
+    if total_experience.years < 1 and total_experience.months < 6:  # Менее 6 месяцев стажа
+        if mrot is None:
+            raise ValueError("Введите МРОТ")
+
+        daily_payment = mrot * Decimal('0.6') / Decimal('365')  # Один день больничного стоит 60% от МРОТ
+    else:
+        employment_years = total_experience.years  # Количество полных лет работы
+        employment_months = total_experience.months  # Количество полных месяцев работы
+        total_experience_months = employment_years * 12 + employment_months  # Общее количество полных месяцев работы
+
+        if total_experience_months < 60:  # От 6 месяцев до 5 лет стажа
+            daily_payment = salary * Decimal('0.6') / Decimal('365')  # Один день больничного стоит 60% от оклада
+        elif total_experience_months < 96:  # От 5 до 8 лет стажа
+            daily_payment = salary * Decimal('0.8') / Decimal('365')  # Один день больничного стоит 80% от оклада
+        else:  # Свыше 8 лет стажа
+            daily_payment = salary / Decimal('365')  # Один день больничного стоит 100% от оклада
+
+    total_days = (end_date - start_date).days + 1  # Количество дней в больничном периоде
+    total_payment = daily_payment * Decimal(total_days)
+
+    return total_payment
 
 
+def sick_leave(request):
+    if request.method == 'POST':
+        employee_id = request.POST.get('employee')
+        start_date_str = request.POST.get('start_date')
+        end_date_str = request.POST.get('end_date')
+        diagnosis = request.POST.get('diagnosis')
+        conclusion = request.POST.get('conclusion')
+        issuing_institution = request.POST.get('issuing_institution')
+        doctor_name = request.POST.get('doctor_name')
+
+        if not start_date_str or not end_date_str:
+            error_message = "Введите дату"
+            employees = Employee.objects.all()
+            sick_leaves = SickLeave.objects.all()
+            return render(request, 'dashboard/sick_leave.html',
+                          {'employees': employees, 'sick_leaves': sick_leaves, 'error_message': error_message})
+
+        employee = Employee.objects.get(id=employee_id)
+
+        try:
+            start_date = datetime.datetime.strptime(start_date_str, '%Y-%m-%d').date()
+            end_date = datetime.datetime.strptime(end_date_str, '%Y-%m-%d').date()
+        except ValueError:
+            error_message = "Неправильный формат даты"
+            employees = Employee.objects.all()
+            sick_leaves = SickLeave.objects.all()
+            return render(request, 'dashboard/sick_leave.html',
+                          {'employees': employees, 'sick_leaves': sick_leaves, 'error_message': error_message})
+
+        bank = Bank.objects.get(employee=employee)
+        salary = bank.salary
+
+        total_experience = calculate_total_experience(employee)
+
+        if total_experience.years < 1 and total_experience.months < 6:
+            mrot_str = request.POST.get('mrot')
+            if not mrot_str:
+                error_message = "Введите МРОТ"
+                employees = Employee.objects.all()
+                sick_leaves = SickLeave.objects.all()
+                return render(request, 'dashboard/sick_leave.html',
+                              {'employees': employees, 'sick_leaves': sick_leaves, 'error_message': error_message})
+
+            try:
+                mrot = Decimal(mrot_str)
+            except ValueError:
+                error_message = "Неправильный формат значения МРОТ"
+                employees = Employee.objects.all()
+                sick_leaves = SickLeave.objects.all()
+                return render(request, 'dashboard/sick_leave.html',
+                              {'employees': employees, 'sick_leaves': sick_leaves, 'error_message': error_message})
+        else:
+            mrot = 0
+
+        total_payment = calculate_payment(total_experience, mrot, salary, start_date, end_date)
+        sick_leave = SickLeave.objects.create(
+            employee=employee,
+            start_date=start_date,
+            end_date=end_date,
+            diagnosis=diagnosis,
+            conclusion=conclusion,
+            issuing_institution=issuing_institution,
+            doctor_name=doctor_name,
+            payment=total_payment
+        )
+
+    elif request.method == 'POST' and 'delete' in request.POST:
+        sick_leave_id = request.POST.get('delete')
+        sick_leave = SickLeave.objects.get(id=sick_leave_id)
+        sick_leave.delete()
+        return redirect('sick_leave')
+
+    employees = Employee.objects.all()
+    sick_leaves = SickLeave.objects.all()
+    error_message = request.POST.get('error_message')
+
+    return render(request, 'dashboard/sick_leave.html',
+                  {'employees': employees, 'sick_leaves': sick_leaves, 'error_message': error_message})
 
 
-
-
-
-
-
+def delete_sick_leave(request, sick_leave_id):
+    sick_leave = get_object_or_404(SickLeave, pk=sick_leave_id)
+    sick_leave.delete()
+    return redirect('dashboard:sick_leave')

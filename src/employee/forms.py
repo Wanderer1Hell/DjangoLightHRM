@@ -76,13 +76,18 @@ class MilitaryCreateForm(forms.ModelForm):
 class FamilyCreateForm(forms.ModelForm):
     class Meta:
         model = Relationship
-        fields = ['employee', 'status', 'spouse', 'occupation', 'tel', 'children', 'nextofkin', 'relationship']
+        fields = ['employee', 'status', 'spouse', 'tel', 'children']
 
 
 class BankAccountCreation(forms.ModelForm):
+    labor_book_issue_date = forms.DateField(
+        widget=forms.DateInput(attrs={'type': 'date'}),
+        label='Дата выдачи трудовой книжки')
+
     class Meta:
         model = Bank
-        fields = ['employee', 'name', 'branch', 'account', 'salary', 'work_schedule']
+        fields = ['employee', 'name', 'branch', 'account', 'salary', 'work_schedule', 'labor_book_series',
+                  'labor_book_number', 'labor_book_issue_date', 'labor_book_in_possession']
 
 
 class EmploymentHistoryForm(forms.ModelForm):

@@ -1,0 +1,256 @@
+{% extends '_layout.html' %}
+{% block title %} {{ title }} {% endblock %}
+
+ {% block navheader %}
+ 	{% include 'includes/navheader_employee_app.html' %}
+ {% endblock %}
+
+
+
+   {% block stylesheet %}
+	   	.fa-eye,.fa-pencil{
+	   	    margin-right: 5px;
+	   }
+
+	   .table-shadow{
+	   	background: white;
+    	padding: 2%;
+    	-webkit-box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 3px 1px -2px rgba(0,0,0,0.12), 0 1px 5px 0 rgba(	0,0,0,0.2);
+    	box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 3px 1px -2px rgba(0,0,0,0.12), 0 1px 5px 0 rgba(0,0,0,0.2);
+	}
+	
+
+	h4{
+	margin:2px 0 5px 0 !important;
+	}
+
+
+
+	.table-description{
+		<!-- STYLE WITH GOOGLE FONT -->
+	}
+
+	.download-print-action{
+		padding-bottom: 12px;
+	}
+
+
+    #override-start{
+	    background:none !important;
+	    top: 35% !important;
+	    right:13px;
+	    color:#000;
+	    font-size: 24px;
+
+	}
+
+	.alert-warning{
+	    background:#fd7b7b;
+	}
+
+	.alert-success {
+	    background-color: #82b72a;
+	}
+
+	.alert-success,.alert-warning{
+	    font-size:16px;
+	}
+
+	.sec-box{
+	 width:200px;
+     height:80px;
+     max-width:100%;
+     line-height:80px;
+     text-align:center;
+     position:relative;
+     
+     font-size:1.9rem;
+
+    -webkit-box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 3px 1px -2px rgba(0,0,0,0.12), 0 1px 5px 0 rgba(0,0,0,0.2);
+    box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 3px 1px -2px rgba(0,0,0,0.12), 0 1px 5px 0 rgba(0,0,0,0.2);
+    transition: all 400ms ease-in;
+
+    font-variant: petite-caps;
+}
+
+
+.sec-box a{
+ color:#fff;
+ text-decoration:none;
+	
+}
+
+
+ .employee-box{
+ 	background:#3f9a26;
+}
+
+
+ .leave-box{
+ 	background:#fff;
+
+}
+
+.leave-box a{
+	color:#3ea7c7 !important;
+}
+
+
+ .birthday-box{
+ 	background:#8664ad;
+}
+
+.deleted-box{
+	background:#d42828;
+}
+
+.company-box{
+	background:#868686;
+}
+
+.margin-bottom{
+	margin-bottom:1.4rem;
+}
+
+.count-object {
+    position: absolute;
+    top: 31%;
+    right: 12px;
+    font-size: 25px;
+    font-weight: 100;
+    font-variant: petite-caps;
+    color: #f5f5f5;
+    text-shadow:1px 1px rgba(8, 8, 8, 0.23);
+}
+
+.deprt{
+	color:#4195bd !important;
+}
+
+
+#stylebutton{
+	background: #60a0b3 !important;
+    color: #fff !important;
+    font-variant: petite-caps !important;
+    font-size: 14px !important;
+}
+
+.input-group-btn + input:focus{
+	outline:#60a0b3;
+}
+
+.form-control-sm {
+  width: 150px;
+}
+
+.birth-present{
+	color: #ff37d6;
+    font-size: 22px;
+}
+
+ {% endblock %}
+{% block content %}
+<section class="content">
+    <section class="container-fluid">
+
+        <section class="form-wrapper">
+            <section class="row">
+                <section class="col-lg-12 col-md-12 col-sm-12 text-center space-margin">
+                    <div class="text-center table-description">
+                        <h4 class="title-h3" style="color: #60a0b3 !important; text-shadow: 1px 0px rgba(0,0,0,0.11)">БОЛЬНИЧНЫЕ</h4>
+                    </div>
+                </section>
+            </section>
+
+            <form method="post">
+                {% csrf_token %}
+
+                <div class="form-group">
+                    <label for="employee">Выберите сотрудника:</label>
+                    <select class="form-control" name="employee" id="employee">
+                        {% for employee in employees %}
+                            <option value="{{ employee.id }}">{{ employee.get_full_name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="start_date">Дата начала:</label>
+                    <input type="date" class="form-control" name="start_date" id="start_date">
+                </div>
+
+                <div class="form-group">
+                    <label for="end_date">Дата окончания:</label>
+                    <input type="date" class="form-control" name="end_date" id="end_date">
+                </div>
+
+                <div class="form-group">
+                    <label for="diagnosis">Диагноз:</label>
+                    <input type="text" class="form-control" name="diagnosis" id="diagnosis">
+                </div>
+
+                <div class="form-group">
+                    <label for="conclusion">Заключение:</label>
+                    <input type="text" class="form-control" name="conclusion" id="conclusion">
+                </div>
+
+                <div class="form-group">
+                    <label for="issuing_institution">Учреждение выдавшее справку:</label>
+                    <input type="text" class="form-control" name="issuing_institution" id="issuing_institution">
+                </div>
+
+                <div class="form-group">
+                    <label for="doctor_name">ФИО врача:</label>
+                    <input type="text" class="form-control" name="doctor_name" id="doctor_name">
+                </div>
+
+                <div class="form-group">
+                    <label for="mrot">МРОТ:</label>
+                    <input type="text" class="form-control" name="mrot" id="mrot" inputmode="decimal">
+                </div>
+
+                <button type="submit" class="btn btn-primary">Сохранить</button>
+            </form>
+
+            <br><br>
+
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Сотрудник</th>
+                        <th>Дата начала</th>
+                        <th>Дата окончания</th>
+                        <th>Диагноз</th>
+                        <th>Заключение</th>
+                        <th>Учреждение</th>
+                        <th>Врач</th>
+                        <th>Сумма выплаты</th>
+                        <th>Действия</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for sick_leave in sick_leaves %}
+                    <tr>
+                        <td>{{ sick_leave.employee.get_full_name }}</td>
+                        <td>{{ sick_leave.start_date }}</td>
+                        <td>{{ sick_leave.end_date }}</td>
+                        <td>{{ sick_leave.diagnosis }}</td>
+                        <td>{{ sick_leave.conclusion }}</td>
+                        <td>{{ sick_leave.issuing_institution }}</td>
+                        <td>{{ sick_leave.doctor_name }}</td>
+                        <td>{{ sick_leave.payment }}</td>
+                        <td>
+                            <form method="post" action="{% url 'dashboard:delete_sick_leave' sick_leave.id %}">
+                                {% csrf_token %}
+                                <input type="submit" value="Удалить" class="btn btn-danger btn-sm">
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </section>
+
+    </section>
+</section>
+{% endblock %}

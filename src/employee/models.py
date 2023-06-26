@@ -122,7 +122,6 @@ class EmploymentHistory(models.Model):
     organization = models.CharField(_('Организация'), max_length=255, null=True, blank=True)
 
 
-
 class Emergency(models.Model):
     FATHER = 'Отец'
     MOTHER = 'Мать'
@@ -227,18 +226,10 @@ class Relationship(models.Model):
     status = models.CharField(_('Семейное положение'), max_length=40, default=SINGLE, choices=STATUS, blank=False,
                               null=True)
     spouse = models.CharField(_('Супруг\а (ФИО)'), max_length=255, blank=True, null=True)
-    occupation = models.CharField(_('Профессия'), max_length=125, help_text='род занятий супруга\ги', blank=True,
-                                  null=True)
     tel = PhoneNumberField(default=None, null=True, blank=True, verbose_name='Номер телефона супруга\ги',
                            help_text='Введите номер с кодом страны')
     children = models.PositiveIntegerField(_('Кол-во детей'), null=True, blank=True, default=0)
 
-    # recently added - 29/03/19
-    nextofkin = models.CharField(_('Ближайший родственник'), max_length=255, blank=False, null=True,
-                                 help_text='ФИО')
-    relationship = models.CharField(_('Родственные связи '),
-                                    help_text='Кем для вас является этот человек?', max_length=40,
-                                    choices=NEXTOFKIN_RELATIONSHIP, blank=False, null=True)
 
     # close recent
 
@@ -706,3 +697,16 @@ class MilitaryRecord(models.Model):
 class Holiday(models.Model):
     date = models.DateField(_('Дата праздника'), unique=True)
     name = models.CharField(_('Название праздника'), max_length=100)
+
+
+class SickLeave(models.Model):
+    employee = models.ForeignKey('employee', on_delete=models.CASCADE)
+    start_date = models.DateField(_('Дата начала'))
+    end_date = models.DateField(_('Дата окончания'))
+    diagnosis = models.CharField(_('Диагноз'), max_length=255)
+    conclusion = models.CharField(_('Заключение'), max_length=255)
+    issuing_institution = models.CharField(_('Учреждение выдавшее справку'), max_length=255)
+    doctor_name = models.CharField(_('ФИО врача'), max_length=255)
+    mrot = models.DecimalField(_('МРОТ'), max_digits=16, decimal_places=2, null=True, blank=False)
+    payment = models.DecimalField(_('Выплата'), max_digits=16, decimal_places=2, null=True, blank=True)
+

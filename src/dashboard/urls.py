@@ -1,5 +1,6 @@
 from django.urls import path
 from . import views
+from .views import sick_leave
 
 app_name = 'dashboard'
 
@@ -32,12 +33,14 @@ urlpatterns = [
     path('document/update/<int:id>', views.dashboard_document_edit, name='documentedit'),
     path('document/generate', views.fill_template, name='filltemplate'),
     path('document/generate-t8', views.fill_template_t8, name='filltemplate_t8'),
-
+    path('document/generate-t6', views.fill_template_t6, name='filltemplate_t6'),
+    path('document/generate-t11', views.fill_template_t11, name='filltemplate_t11'),
+    path('document/generate-t2', views.fill_template_t2, name='filltemplate_t2'),
     # Military
     path('military/create/', views.dashboard_military_create, name='militarycreate'),
     path('military/update/<int:id>', views.dashboard_military_update, name='militaryupdate'),
 
-    #Shedules
+    # Shedules
     path('employee_info_schedule/', views.employee_info_schedule, name='employee_info_schedule'),
     path('work_schedule/<int:employee_id>/', views.work_schedule, name='work_schedule'),
 
@@ -70,8 +73,11 @@ urlpatterns = [
 
     # Experience
     path('employment_history/add/<int:employee_id>/', views.employment_history_add, name='employment_history_add'),
-    path('employment_history/edit/<int:employment_history_id>/', views.employment_history_edit, name='employment_history_edit'),
+    path('employment_history/edit/<int:employment_history_id>/', views.employment_history_edit,
+         name='employment_history_edit'),
 
-
+    # Sick days
+    path('sick-leave/', sick_leave, name='sick_leave'),
+    path('sick-leave/delete/<int:sick_leave_id>/', views.delete_sick_leave, name='delete_sick_leave'),
 
 ]

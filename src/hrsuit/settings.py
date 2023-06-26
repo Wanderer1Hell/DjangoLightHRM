@@ -136,6 +136,10 @@ CRISPY_TEMPLATE_PACK = 'bootstrap4'
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATIC_URL = '/static/'
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static_in_proj'),
+]
+
 
 # STATIC FILES WILL BE SERVED FROM STATIC_CDN WHEN WE ARE LIVE - OUT SIDE OF PROJECT
 STATIC_ROOT = os.path.join(os.path.dirname(BASE_DIR), 'src', 'static_cdn', 'static_root')

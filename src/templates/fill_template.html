@@ -99,6 +99,9 @@
 <div class="tab-menu">
 <button class="tab" onclick="openTab(event, 'tab1')">Приказ о приеме на работу</button>
 <button class="tab" onclick="openTab(event, 'tab2')">Приказ о расторжении ТД</button>
+<button class="tab" onclick="openTab(event, 'tab3')">Приказ на отпуск</button>
+<button class="tab" onclick="openTab(event, 'tab4')">Приказ о поощрении</button>
+<button class="tab" onclick="openTab(event, 'tab5')">Приказ о взыскании</button>
 </div>
     <div id="tab1" class="tab-content">
         <!-- Поля для вкладки 1 -->
@@ -143,10 +146,86 @@
                     </form>
                 </div>
             </div>
+
+        <div id="tab3" class="tab-content" style="display: none;">
+                <!-- Поля для вкладки 3 -->
+                <div class="form-wrapper">
+                    <form method="post" action="{% url 'dashboard:filltemplate_t6' %}">
+                        {% csrf_token %}
+                        <label for="employee-t6">Выберите сотрудника:</label>
+                        <select name="employee-t6" id="employee-t6">
+                            {% for employee in employees %}
+                            <option value="{{ employee.id }}">{{ employee.get_full_name }}</option>
+                            {% endfor %}
+                        </select>
+                        <label for="document-number-t6">Номер документа:</label>
+                        <input type="text" name="document-number-t6" id="document-number-t6">
+                        <label for="date-compiled-t6">Дата составления:</label>
+                        <input type="date" name="date-compiled-t6" id="date-compiled-t6">
+                        <input type="submit" name="generate-document-t6" value="Сгенерировать документ">
+                    </form>
+                </div>
+            </div>
+
+        <div id="tab4" class="tab-content" style="display: none;">
+                <!-- Поля для вкладки 4 -->
+                <div class="form-wrapper">
+                    <form method="post" action="{% url 'dashboard:filltemplate_t11' %}">
+                        {% csrf_token %}
+                        <label for="employee-t11">Выберите сотрудника:</label>
+                        <select name="employee-t11" id="employee-t11">
+                            {% for employee in employees %}
+                            <option value="{{ employee.id }}">{{ employee.get_full_name }}</option>
+                            {% endfor %}
+                        </select>
+                        <label for="document-number-t11">Номер документа:</label>
+                        <input type="text" name="document-number-t11" id="document-number-t11">
+                        <label for="date-compiled-t11">Дата составления:</label>
+                        <input type="date" name="date-compiled-t11" id="date-compiled-t11">
+                        <label for="condition-t11">Вид поощерения:</label>
+                        <textarea name="condition-t11" id="condition-t11"></textarea>
+                         <label for="motive-t11">Мотив награждения:</label>
+                        <textarea name="motive-t11" id="motive-t11"></textarea>
+                        <label for="аmountwr-t11">Сумма прописью:</label>
+                        <textarea name="amountwr-t11" id="amountwr-t11"></textarea>
+                        <label for="аmount-t11">Сумма прописью:</label>
+                        <textarea name="amount-t11" id="amount-t11"></textarea>
+                        <input type="submit" name="generate-document-t11" value="Сгенерировать документ">
+                    </form>
+                </div>
+        </div>
+
+       <div id="tab5" class="tab-content" style="display: none;">
+                <!-- Поля для вкладки 4 -->
+                <div class="form-wrapper">
+                    <form method="post" action="{% url 'dashboard:filltemplate_t2' %}">
+                        {% csrf_token %}
+                        <label for="employee-t2">Выберите сотрудника:</label>
+                        <select name="employee-t2" id="employee-t2">
+                            {% for employee in employees %}
+                            <option value="{{ employee.id }}">{{ employee.get_full_name }}</option>
+                            {% endfor %}
+                        </select>
+                        <label for="document-number-t2">Номер документа:</label>
+                        <input type="text" name="document-number-t2" id="document-number-t2">
+                        <label for="date-compiled-t2">Дата составления:</label>
+                        <input type="date" name="date-compiled-t2" id="date-compiled-t2">
+                        <label for="date-compiled-t2">Дата инцидента:</label>
+                        <input type="date" name="date_incident-t2" id="date_incident-t2">
+                        <label for="condition-t2">Акт об:</label>
+                        <textarea name="condition-t2" id="condition-t2"></textarea>
+                        <label for="reason-t2">В связи с:</label>
+                        <textarea name="reason-t2" id="reason-t2"></textarea>
+                        <input type="submit" name="generate-document-t2" value="Сгенерировать документ">
+                    </form>
+                </div>
         </div>
     </div>
+</div>
+
 </section>
 <script>
+
   function openTab(event, tabName) {
     // Скрыть все вкладки
     var tabContents = document.getElementsByClassName("tab-content");
