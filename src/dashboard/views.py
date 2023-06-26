@@ -1262,7 +1262,7 @@ def fill_template(request):
 
         company = Company.objects.first()
 
-        template_path = os.path.join(os.path.dirname(BASE_DIR), 'src', 'static_cdn', 'doctemplates', 't2.docx')
+        template_path = os.path.join(os.path.dirname(BASE_DIR), 'src', 'static_cdn', 'doctemplates', 't1.docx')
 
         document_number = request.POST.get('document-number')
         date_compiled = request.POST.get('date-compiled')
